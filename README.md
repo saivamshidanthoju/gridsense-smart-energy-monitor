@@ -179,11 +179,26 @@ node index.js
 ✅ Secure Authentication
 ✅ Scalable Design
 
-👨‍💻 Author
+# 🤝 Contributors
 
-## D Sai Vamshi
+This project was collaboratively developed by a 3-member team from
+MVSR Engineering College, Department of CSE (IoT & Cyber Security with Blockchain Technology).
 
-B.Tech – CSE (IoT & Cyber Security with Blockchain Technology)
+## Team Members
+
+* D Sai Vamshi
+* G Tejeswara Rao
+* D Shashank
+
+## Contributions
+
+| Team Member  | Contribution                                                       |
+| ------------ | ------------------------------------------------------------------ |
+| Danthoju Sai Vamshi | Frontend Development, Dashboard UI, Analytics Integration          |
+| Gunda Tejeswara Rao   | Backend APIs, Authentication, Database Integration                 |
+| Dava Shashank    | IoT Hardware Integration, ESP32 Monitoring, Sensor Data Processing |
+
+---
 
 Support
 
