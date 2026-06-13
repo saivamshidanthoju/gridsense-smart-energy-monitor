@@ -1,0 +1,14 @@
+{
+  "checked": [
+    "home",
+    "about",
+    "login",
+    "signup",
+    "dashboard",
+    "billing",
+    "predictions",
+    "devices",
+    "payments",
+    "alerts"
+  ]
+}

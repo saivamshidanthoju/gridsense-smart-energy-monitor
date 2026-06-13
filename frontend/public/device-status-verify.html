@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Device Status Verify</title>
+  </head>
+  <body>
+    <script>
+      localStorage.setItem(
+        "smart-power-meter-session",
+        JSON.stringify({
+          token: "mock-session-esp32-a4f2",
+          user: {
+            name: "Demo User",
+            email: "user@gmail.com",
+            meterId: "ESP32-A4F2",
+            role: "consumer",
+          },
+          authSource: "mock",
+          authLabel: "Mock Login",
+        }),
+      );
+      window.location.replace("/device-status");
+    </script>
+  </body>
+</html>

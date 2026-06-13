@@ -1,0 +1,41 @@
+
+> smart-energy-dashboard@1.0.0 dev
+> vite --host 127.0.0.1 --port 5173
+
+Port 5173 is in use, trying another one...
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m275[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5174[22m/[39m
+[2m9:43:16 pm[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/HomePage.jsx, /src/index.css[22m
+[2m9:45:08 pm[22m [36m[1m[vite][22m[39m [32mpage reload [39m[2msrc/components/CloudStatusBadge.jsx[22m
+[2m12:08:01 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m12:09:25 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m12:15:42 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx, /src/index.css[22m
+[2m12:16:03 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ThemeToggle.jsx, /src/index.css[22m
+[2m12:16:15 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m12:23:23 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m12:23:35 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Graphs.jsx, /src/index.css[22m
+[2m12:23:46 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/DeviceStatusPage.jsx, /src/index.css[22m
+[2m12:24:06 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ThemeToggle.jsx, /src/index.css[22m
+[2m12:24:20 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css[22m
+[2m12:24:41 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Sidebar.jsx, /src/index.css[22m
+[2m12:24:53 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx, /src/index.css[22m
+[2m12:25:06 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ThemeToggle.jsx, /src/index.css[22m
+[2m12:25:37 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Sidebar.jsx, /src/index.css[22m
+[2m12:30:30 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx, /src/index.css[22m
+[2m12:30:46 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m12:36:48 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx, /src/index.css[22m
+[2m12:37:02 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css[22m
+[2m12:37:12 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css[22m
+[2m12:37:34 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m12:37:42 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m12:37:54 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ThemeToggle.jsx, /src/index.css[22m
+[2m12:38:15 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
+[2m12:38:45 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Dashboard.jsx, /src/index.css[22m
+[2m12:41:46 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx, /src/index.css[22m
+[2m12:42:00 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Sidebar.jsx, /src/index.css[22m
+[2m12:42:09 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx, /src/index.css[22m
+[2m12:44:14 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Navbar.jsx, /src/index.css[22m
+[2m12:44:26 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Sidebar.jsx, /src/index.css[22m
+[2m12:44:34 am[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/index.css[22m
