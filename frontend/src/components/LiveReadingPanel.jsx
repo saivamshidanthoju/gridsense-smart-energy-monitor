@@ -40,7 +40,7 @@ function SummaryStat({ label, value }) {
   return (
     <div className="rounded-[10px] border border-[var(--surface-border)] bg-[var(--surface-soft)] px-3 py-3">
       <p className="section-kicker">{label}</p>
-      <p className="mt-1.5 text-sm font-semibold text-[var(--text-primary)]">{value}</p>
+      <p className="mt-1.5 text-sm font-medium text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }
@@ -55,42 +55,48 @@ export default function LiveReadingPanel({ reading, lastUpdated }) {
   const currentProgress = clampPercent(reading.current, 0, 20);
   const energyProgress = clampPercent(reading.energyKWh, 0, 500);
 
+  const formattedEnergy = Number(reading.energyKWh || 0).toFixed(3);
+
   return (
     <section className="surface-panel h-full p-4 lg:p-5">
       <div className="page-header">
         <div>
-          <p className="section-kicker">Meter performance</p>
-          <h2 className="mt-1 section-heading">Load profile</h2>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Meter Performance</p>
+          <h2 className="text-lg font-semibold text-[var(--text-primary)] mt-0.5">Load profile</h2>
         </div>
-        <span className="status-pill">Updated {formatTimestamp(lastUpdated || reading.timestamp)}</span>
+        <span className="status-pill text-xs font-medium text-[var(--text-secondary)]">
+          Updated {formatTimestamp(lastUpdated || reading.timestamp)}
+        </span>
       </div>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-soft)] p-4">
-          <p className="section-kicker">Current power use</p>
-          <p className="mt-2 text-[2.4rem] font-semibold leading-none text-[var(--text-primary)]">
-            {reading.power}
-            <span className="ml-2 text-base font-medium text-tonal">W</span>
-          </p>
-          <p className="mt-2 text-sm text-tonal">Latest reading from your meter.</p>
+        <div className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-soft)] p-4 flex flex-col justify-between">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Instant Demand</p>
+            <p className="mt-2 text-[2.4rem] font-medium leading-none text-[var(--text-primary)]">
+              {reading.power}
+              <span className="ml-1 text-base font-normal text-tonal">W</span>
+            </p>
+            <p className="mt-2 text-xs leading-relaxed text-tonal">Latest validated sample from the active meter.</p>
+          </div>
 
-          <div className="mt-5 h-2 rounded-full bg-[var(--surface-solid)]">
+          <div className="mt-6 h-2 rounded-full bg-[var(--surface-solid)]">
             <div className="h-full rounded-full bg-[var(--accent-primary)]" style={{ width: `${powerProgress}%` }} />
           </div>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <SummaryStat label="Last reading" value={formatTimestamp(reading.timestamp)} />
-          <SummaryStat label="Update rate" value="Every few seconds" />
+          <SummaryStat label="Last sample" value={formatTimestamp(reading.timestamp)} />
+          <SummaryStat label="Refresh window" value="3 sec sync" />
           <SummaryStat label="Meter ID" value={reading.meterId || "Assigned"} />
           <SummaryStat label="Supply type" value={reading.phaseType || "Single phase"} />
         </div>
       </div>
 
       <div className="mt-5 grid gap-4 rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-solid)] p-4 md:grid-cols-3">
-        <PerformanceBar label="Voltage" value={`${reading.voltage} V`} width={voltageProgress} tone="bg-blue-500" />
-        <PerformanceBar label="Current" value={`${reading.current} A`} width={currentProgress} tone="bg-[var(--accent-primary)]" />
-        <PerformanceBar label="Energy used" value={`${reading.energyKWh} kWh`} width={energyProgress} tone="bg-amber-500" />
+        <PerformanceBar label="Voltage stability" value={`${reading.voltage} V`} width={voltageProgress} tone="bg-blue-500" />
+        <PerformanceBar label="Current load" value={`${reading.current} A`} width={currentProgress} tone="bg-[var(--accent-primary)]" />
+        <PerformanceBar label="Energy usage" value={`${formattedEnergy} kWh`} width={energyProgress} tone="bg-amber-500" />
       </div>
     </section>
   );

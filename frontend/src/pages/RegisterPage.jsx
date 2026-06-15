@@ -93,8 +93,11 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
 
   return (
     <AuthShell activePage="signup" onNavigate={onNavigate}>
-      <div className="surface-panel px-5 py-6 sm:px-6">
-        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Sign Up</h1>
+      <div>
+        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Create Your Account</h1>
+        <p className="mt-1.5 text-xs text-tonal">
+          Register with your Service Connection / Meter Number to start tracking your energy footprint.
+        </p>
 
         {error ? (
           <div className={`mt-4 rounded-[10px] border px-4 py-3 text-sm ${isDark ? "border-rose-500/20 bg-rose-500/10 text-rose-100" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
@@ -104,7 +107,7 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
 
         <form className="mt-5 space-y-4" onSubmit={handleSubmit} noValidate>
           <FormField
-            label="Name"
+            label="Full Name"
             type="text"
             name="name"
             placeholder="Enter your name"
@@ -115,7 +118,7 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
           />
 
           <FormField
-            label="Email"
+            label="Email Address"
             type="email"
             name="email"
             placeholder="Enter your email"
@@ -126,10 +129,10 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
           />
 
           <FormField
-            label="Meter ID"
+            label="Service Connection / Meter Number"
             type="text"
             name="meterId"
-            placeholder="ESP32-A4F2"
+            placeholder="SC-104829375"
             autoComplete="off"
             isDark={isDark}
             value={form.meterId}
@@ -140,7 +143,7 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
             label="Password"
             type={form.showPassword ? "text" : "password"}
             name="password"
-            placeholder="Create a password"
+            placeholder="Create a password (min 8 chars)"
             autoComplete="new-password"
             isDark={isDark}
             value={form.password}
@@ -173,14 +176,14 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
             disabled={loading}
             className="primary-button w-full px-4 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {loading ? "Creating account..." : "Sign Up"}
+            {loading ? "Creating account..." : "Register & Connect"}
           </button>
         </form>
 
         <p className="mt-5 text-center text-sm text-tonal">
-          Already have an account?{" "}
+          Already registered?{" "}
           <button type="button" onClick={onSwitchToLogin} className="font-semibold text-[var(--accent-secondary)]">
-            Login
+            Log in here
           </button>
         </p>
       </div>

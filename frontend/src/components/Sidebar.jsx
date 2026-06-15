@@ -8,13 +8,6 @@ const NAV_ICON_MAP = {
       <path d="M10 19v-5h4v5" />
     </>
   ),
-  graphs: (
-    <>
-      <path d="M5 18V6" />
-      <path d="M5 18h14" />
-      <path d="m8 14 3-4 3 2 4-5" />
-    </>
-  ),
   predictions: (
     <>
       <path d="M6 16c1.5-4 4-6 8-8" />
@@ -50,13 +43,6 @@ const NAV_ICON_MAP = {
       <path d="M10.2 4.6 4.8 14a1.2 1.2 0 0 0 1.04 1.8h12.32A1.2 1.2 0 0 0 19.2 14l-5.4-9.4a1.2 1.2 0 0 0-2.08 0Z" />
     </>
   ),
-  devices: (
-    <>
-      <rect x="6" y="5.5" width="12" height="13" rx="2.5" />
-      <path d="M9.5 9.5h5" />
-      <path d="M9.5 13h5" />
-    </>
-  ),
   settings: (
     <>
       <circle cx="12" cy="12" r="3" />
@@ -89,21 +75,11 @@ function NavigationIcon({ itemId, active }) {
   );
 }
 
-function LogoutIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-[18px] w-[18px]">
-      <path d="M9 6.5V5a2 2 0 0 1 2-2h7v18h-7a2 2 0 0 1-2-2v-1.5" strokeLinecap="round" />
-      <path d="M4 12h10" strokeLinecap="round" />
-      <path d="m10.5 8.5 3.5 3.5-3.5 3.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 export default function Sidebar({
+  user,
   navItems,
   activePage,
   onNavigate,
-  onLogout,
   isOpen,
   isCollapsed,
   onClose,
@@ -137,7 +113,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`fixed inset-y-3 left-3 z-40 flex h-[calc(100vh-1.5rem)] w-[14rem] shrink-0 flex-col border transition-transform duration-300 lg:relative lg:inset-auto lg:h-auto lg:translate-x-0 lg:border-y-0 lg:border-l-0 ${
+      className={`fixed inset-y-3 left-3 z-40 flex h-[calc(100vh-1.5rem)] w-[11rem] shrink-0 flex-col border transition-transform duration-300 lg:relative lg:inset-auto lg:h-auto lg:translate-x-0 lg:border-y-0 lg:border-l-0 ${
         isOpen ? "translate-x-0" : "-translate-x-[115%]"
       } sidebar-shell rounded-[14px] shadow-[var(--shadow-panel)] lg:rounded-none lg:rounded-l-[16px]`}
     >
@@ -164,6 +140,8 @@ export default function Sidebar({
             Close
           </button>
         </div>
+
+
 
         <div className="mt-5 px-2 text-[11px] font-medium uppercase text-[var(--sidebar-muted)]">Menu</div>
         <nav className="mt-2 space-y-1">
@@ -197,18 +175,7 @@ export default function Sidebar({
           })}
         </nav>
 
-        <div className="mt-auto border-t border-[var(--sidebar-border)] pt-3">
-          <button
-            type="button"
-            onClick={onLogout}
-            className="flex w-full items-center gap-2 rounded-[10px] px-2 py-2 text-left text-[var(--sidebar-text)] transition-colors hover:bg-[var(--sidebar-hover)]"
-          >
-            <span className="flex h-8 w-8 items-center justify-center rounded-[9px] text-[var(--sidebar-muted)]">
-              <LogoutIcon />
-            </span>
-            <span className="text-sm font-normal">Logout</span>
-          </button>
-        </div>
+
       </div>
     </aside>
   );

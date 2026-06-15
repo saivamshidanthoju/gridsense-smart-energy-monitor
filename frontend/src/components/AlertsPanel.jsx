@@ -1,19 +1,20 @@
 const SEVERITY_STYLES = {
   info: {
     rail: "bg-blue-500",
-    pill: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/18 dark:bg-blue-500/10 dark:text-blue-100",
+    pill: "border-blue-500/20 bg-blue-500/5 text-blue-500",
   },
   warning: {
     rail: "bg-amber-500",
-    pill: "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-400/18 dark:bg-amber-500/10 dark:text-amber-100",
+    pill: "border-amber-500/20 bg-amber-500/5 text-amber-500",
   },
   critical: {
     rail: "bg-rose-500",
-    pill: "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-400/18 dark:bg-rose-500/10 dark:text-rose-100",
+    pill: "border-rose-500/20 bg-rose-500/5 text-rose-500",
   },
 };
 
 function formatAlertTime(timestamp) {
+  if (!timestamp) return "";
   return new Date(timestamp).toLocaleString("en-IN", {
     day: "2-digit",
     month: "short",
@@ -22,48 +23,63 @@ function formatAlertTime(timestamp) {
   });
 }
 
-export default function AlertsPanel({ alerts = [] }) {
+export default function AlertsPanel({
+  alerts = [],
+  isResolvedArchive = false,
+  onResolve,
+}) {
   return (
-    <section className="surface-panel p-4 lg:p-5">
-      <div className="page-header">
-        <div>
-          <p className="section-kicker">Alert stream</p>
-          <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">Recent alerts</h3>
-        </div>
-        <span className="status-pill">{alerts.length} open</span>
-      </div>
+    <div className="space-y-2.5">
+      {alerts.length ? (
+        alerts.map((alert) => {
+          const style = SEVERITY_STYLES[alert.severity] || SEVERITY_STYLES.info;
 
-      <div className="mt-4 space-y-3">
-        {alerts.length ? (
-          alerts.map((alert) => {
-            const severity = SEVERITY_STYLES[alert.severity] || SEVERITY_STYLES.info;
-
-            return (
-              <article key={alert.id} className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-solid)] px-4 py-4">
-                <div className="flex items-start gap-4">
-                  <span className={`mt-1 h-10 w-1.5 shrink-0 rounded-full ${severity.rail}`} />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-base font-semibold text-[var(--text-primary)]">{alert.title}</p>
-                        <p className="mt-1.5 text-sm leading-6 text-tonal">{alert.message}</p>
-                      </div>
-                      <span className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase ${severity.pill}`}>
+          return (
+            <article key={alert.id} className="rounded-[10px] border border-[var(--surface-border)] bg-[var(--surface-solid)] p-3 flex gap-3.5 items-start">
+              <span className={`h-8.5 w-1 shrink-0 rounded-full ${style.rail}`} />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold text-[var(--text-primary)] leading-tight">{alert.title}</p>
+                      <span className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase ${style.pill}`}>
                         {alert.severity}
                       </span>
                     </div>
-                    <p className="mt-3 text-xs font-medium uppercase text-faint">{formatAlertTime(alert.createdAt)}</p>
+                    <p className="mt-1 text-xs leading-normal text-tonal">{alert.message}</p>
+                  </div>
+
+                  {/* Resolve button or resolved date details */}
+                  <div className="shrink-0">
+                    {isResolvedArchive ? (
+                      <div className="text-right shrink-0">
+                        <span className="text-[10px] font-semibold text-emerald-500 uppercase leading-none">Resolved</span>
+                        <p className="text-[9px] text-tonal mt-0.5">{formatAlertTime(alert.resolvedAt)}</p>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => onResolve?.(alert.id)}
+                        className="secondary-button text-[11px] font-semibold px-2 py-1 transition flex items-center gap-1 hover:!bg-emerald-500/10 hover:!text-emerald-500 hover:!border-emerald-500/20"
+                      >
+                        Resolve
+                      </button>
+                    )}
                   </div>
                 </div>
-              </article>
-            );
-          })
-        ) : (
-          <div className="rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-soft)] px-4 py-4 text-sm text-tonal">
-            No alerts are active right now.
-          </div>
-        )}
-      </div>
-    </section>
+
+                <p className="mt-2 text-[9px] font-semibold uppercase text-faint">
+                  Opened {formatAlertTime(alert.createdAt)}
+                </p>
+              </div>
+            </article>
+          );
+        })
+      ) : (
+        <div className="rounded-[10px] border border-dashed border-[var(--surface-border-strong)] bg-[var(--surface-soft)] p-6 text-center text-xs text-tonal">
+          No alerts found matching this filter.
+        </div>
+      )}
+    </div>
   );
 }

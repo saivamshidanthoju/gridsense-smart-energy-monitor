@@ -46,7 +46,7 @@ export default function LoginPage({ onAuthenticated, onNavigate, onSwitchToRegis
     const meterId = form.meterId.trim();
 
     if (!email || !meterId || !form.password) {
-      setError("Please enter your email, meter ID, and password.");
+      setError("Please enter your email, Service Connection/Meter number, and password.");
       return;
     }
 
@@ -79,8 +79,11 @@ export default function LoginPage({ onAuthenticated, onNavigate, onSwitchToRegis
 
   return (
     <AuthShell activePage="login" onNavigate={onNavigate}>
-      <div className="surface-panel px-5 py-6 sm:px-6">
-        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Login</h1>
+      <div>
+        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Welcome Back</h1>
+        <p className="mt-1.5 text-xs text-tonal">
+          Sign in to access your GridSense account, live usage tracking, and bill predictions.
+        </p>
 
         {error ? (
           <div className={`mt-4 rounded-[10px] border px-4 py-3 text-sm ${isDark ? "border-rose-500/20 bg-rose-500/10 text-rose-100" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
@@ -90,7 +93,7 @@ export default function LoginPage({ onAuthenticated, onNavigate, onSwitchToRegis
 
         <form className="mt-5 space-y-4" onSubmit={handleSubmit} noValidate>
           <FormField
-            label="Email"
+            label="Email Address"
             type="email"
             name="email"
             placeholder="Enter your email"
@@ -101,10 +104,10 @@ export default function LoginPage({ onAuthenticated, onNavigate, onSwitchToRegis
           />
 
           <FormField
-            label="Meter ID"
+            label="Service Connection / Meter Number"
             type="text"
             name="meterId"
-            placeholder="ESP32-A4F2"
+            placeholder="SC-104829375"
             autoComplete="off"
             isDark={isDark}
             value={form.meterId}
@@ -142,9 +145,9 @@ export default function LoginPage({ onAuthenticated, onNavigate, onSwitchToRegis
         </form>
 
         <p className="mt-5 text-center text-sm text-tonal">
-          New user?{" "}
+          New to GridSense?{" "}
           <button type="button" onClick={onSwitchToRegister} className="font-semibold text-[var(--accent-secondary)]">
-            Sign up
+            Create an account
           </button>
         </p>
       </div>

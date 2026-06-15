@@ -5,38 +5,42 @@ function formatUsage(value) {
   return `${Number(value || 0).toFixed(2)} kWh`;
 }
 
-export default function DailyUsageChart({ data = [], title = "Daily kWh Consumption", subtitle }) {
+export default function DailyUsageChart({ data = [], title = "Daily kWh Consumption", subtitle, heightClass = "h-[300px]" }) {
   const { isDark } = useTheme();
   const latest = data[data.length - 1];
 
   return (
-    <section className="surface-panel h-full p-4 lg:p-5">
+    <section className="surface-panel h-full p-3 lg:p-3.5">
       <div className="page-header">
         <div>
           <p className="section-kicker">Daily usage</p>
-          <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
-          {subtitle ? <p className="mt-1.5 text-sm leading-6 text-tonal">{subtitle}</p> : null}
+          <h3 className="mt-0.5 text-base font-semibold text-[var(--text-primary)]">{title}</h3>
+          {subtitle ? <p className="mt-1 text-xs leading-normal text-tonal">{subtitle}</p> : null}
         </div>
 
-        {latest ? <span className="status-pill">{formatUsage(latest.kWh)}</span> : null}
+        {latest ? (
+          <span className="status-pill !border-orange-500/20 !bg-orange-500/10 !text-orange-600 dark:!text-orange-400 dark:!bg-orange-950/30 font-semibold">
+            {formatUsage(latest.kWh)}
+          </span>
+        ) : null}
       </div>
 
-      <div className="mt-4 h-[300px] rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-soft)] p-3">
+      <div className={`mt-2.5 ${heightClass}`}>
         {data.length ? (
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+            <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke={isDark ? "rgba(148,163,184,0.16)" : "rgba(203,213,225,0.75)"}
+                stroke={isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)"}
               />
               <XAxis
                 dataKey="day"
-                tick={{ fill: isDark ? "#94a3b8" : "#64748b", fontSize: 12 }}
+                tick={{ fill: isDark ? "#71717a" : "#64748b", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: isDark ? "#94a3b8" : "#64748b", fontSize: 12 }}
+                tick={{ fill: isDark ? "#71717a" : "#64748b", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -50,7 +54,7 @@ export default function DailyUsageChart({ data = [], title = "Daily kWh Consumpt
                 }}
                 labelStyle={{ color: isDark ? "#cbd5e1" : "#64748b" }}
               />
-              <Bar dataKey="kWh" fill="#0f766e" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="kWh" fill="#f97316" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         ) : (

@@ -7,7 +7,6 @@ import AnalyticsPage from "./pages/AnalyticsPage";
 import BillingPage from "./pages/BillingPage";
 import Dashboard from "./pages/Dashboard";
 import DeviceStatusPage from "./pages/DeviceStatusPage";
-import Graphs from "./pages/Graphs";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import PaymentsPage from "./pages/PaymentsPage";
@@ -26,16 +25,14 @@ import {
 
 const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard" },
-  { id: "graphs", label: "Graphs" },
   { id: "predictions", label: "Predictions" },
   { id: "billing", label: "Billing" },
   { id: "payments", label: "Payments" },
   { id: "alerts", label: "Alerts" },
-  { id: "devices", label: "Device Profile" },
   { id: "settings", label: "Settings" },
 ];
 
-const PRIVATE_ROUTES = new Set([...NAV_ITEMS.map((item) => item.id), "analytics"]);
+const PRIVATE_ROUTES = new Set([...NAV_ITEMS.map((item) => item.id), "analytics", "devices"]);
 const PUBLIC_ROUTES = new Set(["home", "about", "login", "signup"]);
 
 const INITIAL_DASHBOARD_STATE = {
@@ -100,7 +97,7 @@ function getMeterStatus(meter, latestReading, connectionLabel) {
 }
 
 function AppContent() {
-  useTheme();
+  const { setTheme } = useTheme();
   const [session, setSession] = useState(() => loadStoredSession());
   const [route, setRoute] = useState(() => getRouteFromPathname(window.location.pathname));
   const [dashboardState, setDashboardState] = useState(INITIAL_DASHBOARD_STATE);
@@ -235,6 +232,7 @@ function AppContent() {
     saveStoredSession(nextSession);
     setDashboardState(INITIAL_DASHBOARD_STATE);
     setSession(nextSession);
+    setTheme("dark");
     navigateToPage("dashboard", true);
   }
 
@@ -242,7 +240,20 @@ function AppContent() {
     clearStoredSession();
     setSession(null);
     setDashboardState(INITIAL_DASHBOARD_STATE);
+    setTheme("light");
     navigateToPublic("login", true);
+  }
+
+  function handleUpdateUser(updatedFields) {
+    const nextSession = {
+      ...session,
+      user: {
+        ...session.user,
+        ...updatedFields,
+      },
+    };
+    setSession(nextSession);
+    saveStoredSession(nextSession);
   }
 
   function toggleSidebarCollapsed() {
@@ -324,7 +335,6 @@ function AppContent() {
 
   const pageContent = {
     dashboard: <Dashboard {...sharedPageProps} />,
-    graphs: <Graphs {...sharedPageProps} />,
     predictions: <Predictions {...sharedPageProps} />,
     analytics: <AnalyticsPage {...sharedPageProps} />,
     billing: <BillingPage {...sharedPageProps} />,
@@ -351,7 +361,6 @@ function AppContent() {
             navItems={NAV_ITEMS}
             activePage={activePage}
             onNavigate={(page) => navigateToPage(page)}
-            onLogout={handleLogout}
             isOpen={sidebarOpen}
             isCollapsed={sidebarCollapsed}
             onClose={() => setSidebarOpen(false)}
@@ -361,9 +370,13 @@ function AppContent() {
           <div className="relative flex min-w-0 flex-1 flex-col bg-[var(--surface-soft)]">
             <Navbar
               user={session.user}
+              activePage={activePage}
+              alerts={dashboardState.alerts}
               onMenuClick={() => setSidebarOpen(true)}
               onNavigatePublic={navigateToPublic}
               onNavigatePrivate={navigateToPage}
+              onLogout={handleLogout}
+              onUpdateUser={handleUpdateUser}
             />
 
             <main className="flex-1 overflow-y-auto overflow-x-hidden px-3 pb-3 pt-3 lg:px-5 lg:pb-5 lg:pt-4">

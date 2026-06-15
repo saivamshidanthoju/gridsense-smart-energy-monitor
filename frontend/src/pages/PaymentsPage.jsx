@@ -9,7 +9,7 @@ import {
 const PAYMENT_METHODS = [
   { id: "UPI", label: "UPI", note: "Google Pay, PhonePe, Paytm" },
   { id: "Card", label: "Card", note: "Debit or credit card" },
-  { id: "Net Banking", label: "Net Banking", note: "Bank transfer login" },
+  { id: "Net Banking", label: "Net Banking", note: "Secure bank portal login" },
 ];
 
 function formatCurrency(amount) {
@@ -48,13 +48,36 @@ function uniquePayments(rows = []) {
   });
 }
 
-function DetailTile({ label, value, note }) {
+function DetailTile({ label, value, note, dotColor }) {
   return (
-    <div className="metric-tile px-4 py-4">
-      <p className="section-kicker">{label}</p>
+    <div className="metric-tile px-4 py-4 card-glow hover-lift">
+      <div className="flex items-center justify-between">
+        <p className="section-kicker">{label}</p>
+        {dotColor ? <span className={`h-2 w-2 rounded-full ${dotColor}`} /> : null}
+      </div>
       <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">{value}</p>
       {note ? <p className="mt-1 text-xs leading-5 text-tonal">{note}</p> : null}
     </div>
+  );
+}
+
+function isCurrentOrPreviousMonth(billMonth) {
+  if (!billMonth) return false;
+  const now = new Date();
+  
+  const currentLong = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(now);
+  const currentShort = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric" }).format(now);
+  
+  const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const prevLong = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(prevDate);
+  const prevShort = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric" }).format(prevDate);
+  
+  const m = billMonth.trim().toLowerCase();
+  return (
+    m.includes(currentLong.toLowerCase()) ||
+    m.includes(currentShort.toLowerCase()) ||
+    m.includes(prevLong.toLowerCase()) ||
+    m.includes(prevShort.toLowerCase())
   );
 }
 
@@ -64,6 +87,7 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
   const payableAmount = Number(bill?.finalPayableEstimate ?? bill?.estimatedBill ?? 0);
   const [selectedMethod, setSelectedMethod] = useState(PAYMENT_METHODS[0].id);
   const [paymentHistory, setPaymentHistory] = useState(() => getStoredPaymentHistory(meterId));
+  const [showAllHistory, setShowAllHistory] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState("");
@@ -98,6 +122,16 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
     [billMonth, paymentHistory],
   );
   const paymentStatus = paidRecord ? "Paid" : "Unpaid";
+
+  const amountDue = paidRecord ? 0 : payableAmount;
+  const dueDate = bill?.dueDate || "28-Jun-2026";
+
+  const displayedPayments = useMemo(() => {
+    if (showAllHistory) {
+      return paymentHistory;
+    }
+    return paymentHistory.filter((payment) => isCurrentOrPreviousMonth(payment.billMonth));
+  }, [paymentHistory, showAllHistory]);
 
   async function handlePayment() {
     setProcessing(true);
@@ -134,33 +168,46 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
     }
   }
 
+  function handleDownloadReceipt(receiptNum) {
+    if (!receiptNum) {
+      setReceiptNote("Receipt unavailable.");
+      return;
+    }
+    alert(`Downloading receipt ${receiptNum} for ₹${payableAmount}...`);
+  }
+
   return (
-    <div className="page-stack">
+    <div className="page-stack animate-fade-up">
+      {/* Account Info and Overview */}
       <section className="surface-panel p-4 lg:p-5">
         <div className="page-header">
           <div>
-            <p className="section-kicker">Payments</p>
-            <h2 className="mt-1 section-heading">Current payable bill</h2>
+            <p className="section-kicker">Transaction Desk</p>
+            <h2 className="mt-1 section-heading">Billing & Payments Overview</h2>
+            <p className="text-xs text-tonal mt-1">Meter ID: {meterId} · Linked Account</p>
           </div>
-          <span className="status-pill">{paymentStatus}</span>
+          <span className={`status-pill ${paymentStatus === "Paid" ? "!border-emerald-500/20 !bg-emerald-500/10 !text-emerald-500 font-semibold" : "!border-rose-500/20 !bg-rose-500/10 !text-rose-500 font-semibold"}`}>
+            {paymentStatus}
+          </span>
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <DetailTile label="Payable amount" value={formatCurrency(payableAmount)} note={billMonth} />
-          <DetailTile label="Bill month" value={billMonth} note="Current billing cycle" />
-          <DetailTile label="Meter ID" value={meterId} note="Linked meter account" />
-          <DetailTile label="Payment status" value={paymentStatus} note={paidRecord ? formatDate(paidRecord.paidAt) : "Awaiting payment"} />
+          <DetailTile label="Current Bill Amount" value={formatCurrency(payableAmount)} note={`Cycle: ${billMonth}`} dotColor="bg-indigo-500" />
+          <DetailTile label="Amount Due" value={formatCurrency(amountDue)} note={paidRecord ? "Balance cleared" : "Outstanding balance"} dotColor={paidRecord ? "bg-emerald-500" : "bg-rose-500"} />
+          <DetailTile label="Due Date" value={dueDate} note={paidRecord ? "No pending actions" : "Pay before late fee applies"} dotColor="bg-amber-500" />
+          <DetailTile label="Payment Status" value={paymentStatus} note={paidRecord ? `Settled on ${formatDate(paidRecord.paidAt)}` : "Awaiting Transaction"} dotColor={paidRecord ? "bg-emerald-500" : "bg-rose-500"} />
         </div>
       </section>
 
-      <section className={successPayment ? "grid gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]" : "grid gap-4"}>
-        <section className="surface-panel p-4 lg:p-5">
+      {/* Payment checkout block */}
+      <section className={successPayment ? "grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]" : "grid gap-4"}>
+        <section className="surface-panel p-4 lg:p-5 card-glow">
           <div className="page-header">
             <div>
-              <p className="section-kicker">Payment method</p>
-              <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">Choose payment option</h3>
+              <p className="section-kicker">Secure Checkout</p>
+              <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">Payment Method Selection</h3>
             </div>
-            <span className="status-pill">Payment ready</span>
+            <span className="status-pill">Payment Desk Ready</span>
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-3">
@@ -172,11 +219,12 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
                   key={method.id}
                   type="button"
                   onClick={() => setSelectedMethod(method.id)}
-                  className={`rounded-[12px] border px-4 py-4 text-left transition-colors ${
+                  className={`rounded-[12px] border px-4 py-4 text-left transition-colors hover-lift ${
                     active
-                      ? "border-[var(--accent-primary)] bg-[rgba(15,118,110,0.08)]"
+                      ? "border-[var(--accent-primary)] bg-[rgba(99,102,241,0.08)]"
                       : "border-[var(--surface-border)] bg-[var(--surface-solid)] hover:bg-[var(--surface-soft)]"
                   }`}
+                  disabled={Boolean(paidRecord)}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-semibold text-[var(--text-primary)]">{method.label}</p>
@@ -195,9 +243,9 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
           ) : null}
 
           {successPayment ? (
-            <div className="mt-4 rounded-[12px] border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-800 dark:border-emerald-400/18 dark:bg-emerald-500/10 dark:text-emerald-100">
+            <div className="mt-4 rounded-[12px] border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-800 dark:border-emerald-400/18 dark:bg-emerald-500/10 dark:text-emerald-100 animate-fade-up">
               <p className="font-semibold">Payment successful</p>
-              <p className="mt-1">Receipt {successPayment.receiptNumber} for {formatCurrency(successPayment.amount)} is saved in payment history.</p>
+              <p className="mt-1">Receipt {successPayment.receiptNumber} for {formatCurrency(successPayment.amount)} is registered in your log.</p>
             </div>
           ) : null}
 
@@ -208,30 +256,37 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
               disabled={processing || payableAmount <= 0 || Boolean(paidRecord)}
               onClick={() => setConfirmOpen(true)}
             >
-              {processing ? "Processing..." : paidRecord ? "Already paid" : "Pay Now"}
+              {processing ? "Processing..." : paidRecord ? "Bill Cleared ✓" : `Pay ₹${payableAmount.toFixed(0)} Now`}
             </button>
-            <button
-              type="button"
-              className="secondary-button px-5 py-2.5 text-sm"
-              onClick={() => setReceiptNote("Receipt download will be available after the payment is recorded.")}
-            >
-              Download receipt
-            </button>
+            {paidRecord && (
+              <button
+                type="button"
+                className="secondary-button px-5 py-2.5 text-sm flex items-center gap-1.5"
+                onClick={() => handleDownloadReceipt(paidRecord.receiptNumber)}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" className="h-4 w-4">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span>Download Receipt</span>
+              </button>
+            )}
           </div>
 
           {receiptNote ? <p className="mt-3 text-sm text-tonal">{receiptNote}</p> : null}
         </section>
 
         {successPayment ? (
-          <aside className="grid content-start gap-4">
-            <section className="surface-panel p-4">
+          <aside className="grid content-start gap-4 animate-fade-up">
+            <section className="surface-panel p-4 card-glow">
               <p className="section-kicker">Success receipt</p>
               <div className="mt-3 space-y-3 text-sm">
-                <div className="flex justify-between gap-3">
-                  <span className="text-tonal">Receipt</span>
+                <div className="flex justify-between gap-3 border-b border-[var(--surface-border)] pb-2">
+                  <span className="text-tonal">Receipt No</span>
                   <span className="font-semibold text-[var(--text-primary)]">{successPayment.receiptNumber}</span>
                 </div>
-                <div className="flex justify-between gap-3">
+                <div className="flex justify-between gap-3 border-b border-[var(--surface-border)] pb-2">
                   <span className="text-tonal">Method</span>
                   <span className="font-semibold text-[var(--text-primary)]">{successPayment.method}</span>
                 </div>
@@ -245,40 +300,43 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
         ) : null}
       </section>
 
-      <section className="surface-panel p-4 lg:p-5">
+      {/* Transaction Log */}
+      <section className="surface-panel p-4 lg:p-5 card-glow">
         <div className="page-header">
           <div>
-            <p className="section-kicker">Payment history</p>
-            <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">Recent transactions</h3>
+            <p className="section-kicker">Audit Trails</p>
+            <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">Transaction & Payments History</h3>
           </div>
-          <span className="status-pill">{paymentHistory.length} record</span>
+          <span className="status-pill">
+            {showAllHistory ? paymentHistory.length : displayedPayments.length} of {paymentHistory.length} records
+          </span>
         </div>
 
         <div className="mt-4 overflow-hidden rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-solid)]">
           <table className="soft-table">
             <thead>
               <tr>
-                <th>Receipt</th>
-                <th>Month</th>
-                <th>Method</th>
-                <th>Paid at</th>
-                <th className="text-right">Amount</th>
+                <th>Receipt ID</th>
+                <th>Cycle</th>
+                <th>Payment Method</th>
+                <th>Transaction Date</th>
+                <th className="text-right">Amount Paid</th>
               </tr>
             </thead>
             <tbody>
-              {paymentHistory.length ? (
-                paymentHistory.map((payment) => (
-                  <tr key={payment.id || payment.paymentId}>
-                    <td>{payment.receiptNumber || payment.paymentId}</td>
+              {displayedPayments.length ? (
+                displayedPayments.map((payment) => (
+                  <tr key={payment.id || payment.paymentId} className="hover:bg-[var(--surface-soft)] transition-colors">
+                    <td className="font-semibold text-indigo-500">{payment.receiptNumber || payment.paymentId}</td>
                     <td>{payment.billMonth}</td>
                     <td>{payment.method}</td>
                     <td>{formatDate(payment.paidAt)}</td>
-                    <td className="text-right font-semibold">{formatCurrency(payment.amount)}</td>
+                    <td className="text-right font-semibold text-[var(--text-primary)]">{formatCurrency(payment.amount)}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="text-tonal">
+                  <td colSpan="5" className="text-tonal text-center py-4">
                     Payment records will appear here after the first successful transaction.
                   </td>
                 </tr>
@@ -286,15 +344,40 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
             </tbody>
           </table>
         </div>
+
+        {paymentHistory.length > displayedPayments.length && !showAllHistory && (
+          <div className="mt-4 flex justify-center pb-1">
+            <button
+              type="button"
+              className="secondary-button text-xs font-semibold px-4 py-2"
+              onClick={() => setShowAllHistory(true)}
+            >
+              View Full Payment History ({paymentHistory.length - displayedPayments.length} older records)
+            </button>
+          </div>
+        )}
+
+        {showAllHistory && paymentHistory.length > 2 && (
+          <div className="mt-4 flex justify-center pb-1">
+            <button
+              type="button"
+              className="secondary-button text-xs font-semibold px-4 py-2"
+              onClick={() => setShowAllHistory(false)}
+            >
+              Collapse Older Records
+            </button>
+          </div>
+        )}
       </section>
 
+      {/* Confirmation Modal */}
       {confirmOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 px-4">
-          <div className="w-full max-w-md rounded-[14px] border border-[var(--surface-border)] bg-[var(--surface-solid)] p-5 shadow-[var(--shadow-panel)]">
-            <p className="section-kicker">Confirm payment</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-[14px] border border-[var(--surface-border)] bg-[var(--surface-solid)] p-5 shadow-[var(--shadow-panel)] animate-fade-up">
+            <p className="section-kicker">Confirm Transaction</p>
             <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{formatCurrency(payableAmount)}</h3>
             <p className="mt-2 text-sm leading-6 text-tonal">
-              Pay {billMonth} bill for meter {meterId} using {selectedMethod}.
+              Complete the payment of {billMonth} bill for meter {meterId} using {selectedMethod}.
             </p>
 
             <div className="mt-5 flex justify-end gap-3">

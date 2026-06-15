@@ -20,6 +20,7 @@ export default function VoltageCurrentTrendChart({
   history = [],
   title = "Voltage and Current Trend",
   subtitle,
+  heightClass = "h-[300px]",
 }) {
   const { isDark } = useTheme();
   const data = history.map((reading) => ({
@@ -30,49 +31,49 @@ export default function VoltageCurrentTrendChart({
   const latest = data[data.length - 1];
 
   return (
-    <section className="surface-panel h-full p-4 lg:p-5">
+    <section className="surface-panel h-full p-3 lg:p-3.5">
       <div className="page-header">
         <div>
           <p className="section-kicker">Signal comparison</p>
-          <h3 className="mt-1 text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
-          {subtitle ? <p className="mt-1.5 text-sm leading-6 text-tonal">{subtitle}</p> : null}
+          <h3 className="mt-0.5 text-base font-semibold text-[var(--text-primary)]">{title}</h3>
+          {subtitle ? <p className="mt-1 text-xs leading-normal text-tonal">{subtitle}</p> : null}
         </div>
 
         {latest ? (
-          <span className="status-pill">
+          <span className="status-pill !border-blue-500/20 !bg-blue-500/10 !text-blue-600 dark:!text-blue-400 dark:!bg-blue-950/30 font-semibold">
             {formatVoltage(latest.voltage)} / {formatCurrent(latest.current)}
           </span>
         ) : null}
       </div>
 
-      <div className="mt-4 h-[300px] rounded-[12px] border border-[var(--surface-border)] bg-[var(--surface-soft)] p-3">
+      <div className={`mt-2.5 ${heightClass}`}>
         {data.length ? (
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke={isDark ? "rgba(148,163,184,0.16)" : "rgba(203,213,225,0.75)"}
+                stroke={isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)"}
               />
               <XAxis
                 dataKey="time"
-                tick={{ fill: isDark ? "#94a3b8" : "#64748b", fontSize: 12 }}
+                tick={{ fill: isDark ? "#71717a" : "#64748b", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 yAxisId="left"
-                tick={{ fill: isDark ? "#94a3b8" : "#64748b", fontSize: 12 }}
+                tick={{ fill: isDark ? "#71717a" : "#64748b", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
-                width={52}
+                width={36}
               />
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                tick={{ fill: isDark ? "#94a3b8" : "#64748b", fontSize: 12 }}
+                tick={{ fill: isDark ? "#71717a" : "#64748b", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
-                width={52}
+                width={36}
               />
               <Tooltip
                 contentStyle={{
@@ -91,8 +92,8 @@ export default function VoltageCurrentTrendChart({
                 yAxisId="left"
                 type="monotone"
                 dataKey="voltage"
-                stroke="#2563eb"
-                strokeWidth={2.5}
+                stroke="#3b82f6"
+                strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 5 }}
               />
@@ -100,8 +101,8 @@ export default function VoltageCurrentTrendChart({
                 yAxisId="right"
                 type="monotone"
                 dataKey="current"
-                stroke="#0f766e"
-                strokeWidth={2.5}
+                stroke="#10b981"
+                strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 5 }}
               />

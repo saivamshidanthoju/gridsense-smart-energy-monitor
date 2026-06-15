@@ -5,7 +5,7 @@ import {
   getBillingDueDateLabel,
 } from "../utils/telanganaTariff";
 
-const DEFAULT_METER_ID = "ESP32-A4F2";
+const DEFAULT_METER_ID = "SC-104829375";
 const SIMULATION_INTERVAL_MS = 3000;
 
 const meterSimulation = new Map();

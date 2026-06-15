@@ -15,7 +15,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const SIMULATION_INTERVAL_MS = 3000;
-const DEFAULT_METER_ID = "ESP32-A4F2";
+const DEFAULT_METER_ID = "SC-104829375";
 
 let db;
 let client;
@@ -216,28 +216,28 @@ function buildAlerts(meterId, latestReading, bill) {
     {
       id: `${meterId}-power`,
       severity: latestReading.power > 1400 ? "critical" : "info",
-      title: latestReading.power > 1400 ? "Peak load detected" : "Cloud sync healthy",
+      title: latestReading.power > 1400 ? "Peak load warning" : "Connection stabilized",
       message:
         latestReading.power > 1400
-          ? `Power crossed ${latestReading.power} W. Consider reducing heavy appliance usage.`
-          : "ESP32 readings are reaching the dashboard on the 3 second refresh cycle.",
+          ? `Power usage crossed ${latestReading.power} W. Consider turning off water heaters or heavy appliances.`
+          : "Smart electricity meter is connected and transmitting usage updates in real-time.",
       createdAt: alertTime,
     },
     {
       id: `${meterId}-voltage`,
       severity: latestReading.voltage < 225 ? "warning" : "info",
-      title: latestReading.voltage < 225 ? "Voltage dip observed" : "Voltage within nominal band",
+      title: latestReading.voltage < 225 ? "Voltage dip observed" : "Voltage stable",
       message:
         latestReading.voltage < 225
-          ? `Latest voltage is ${latestReading.voltage} V. Check incoming line stability.`
-          : `Voltage is stable near ${latestReading.voltage} V for meter ${meterId}.`,
+          ? `Voltage is low at ${latestReading.voltage} V. Your line quality might be fluctuating.`
+          : `Line voltage is stable near ${latestReading.voltage} V.`,
       createdAt: new Date(new Date(alertTime).getTime() - 60000).toISOString(),
     },
     {
       id: `${meterId}-billing`,
       severity: bill.finalPayableEstimate > 1000 ? "warning" : "info",
-      title: "Estimated bill refreshed",
-      message: `Estimated monthly bill updated from live energy usage for meter ${meterId}.`,
+      title: "Estimated bill updated",
+      message: `Estimated monthly bill updated based on current usage.`,
       createdAt: new Date(new Date(alertTime).getTime() - 120000).toISOString(),
     },
   ];
