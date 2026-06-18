@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import BrandMark from "./BrandMark";
-import ThemeToggle from "./ThemeToggle";
+import { useTheme } from "../hooks/useTheme";
 
 function NavButton({ active, children, onClick, variant = "plain" }) {
   const variantClass =
     variant === "primary"
-      ? "bg-indigo-600 text-white hover:bg-indigo-500 shadow-sm"
+      ? "bg-[var(--accent-primary)] text-white hover:opacity-90 shadow-sm"
       : active
         ? "bg-[var(--surface-soft)] text-[var(--text-primary)]"
         : "text-tonal hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]";
@@ -14,7 +14,7 @@ function NavButton({ active, children, onClick, variant = "plain" }) {
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-[10px] px-3 py-2 text-sm font-semibold transition ${variantClass}`}
+      className={`rounded-[10px] px-3.5 py-2 text-[16px] sm:text-[17px] font-bold transition ${variantClass}`}
     >
       {children}
     </button>
@@ -23,6 +23,11 @@ function NavButton({ active, children, onClick, variant = "plain" }) {
 
 export default function PublicShell({ activePage, children, isAuthenticated = false, onNavigate, onDashboard, hideHeaderFooter = false }) {
   const [scrolled, setScrolled] = useState(false);
+  const { setTheme } = useTheme();
+
+  useEffect(() => {
+    setTheme("light");
+  }, [setTheme]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,27 +45,25 @@ export default function PublicShell({ activePage, children, isAuthenticated = fa
     if (activePage === "about") {
       document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
     } else {
+      sessionStorage.setItem("scrollToContact", "true");
       onNavigate?.("about");
-      setTimeout(() => {
-        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-      }, 150);
     }
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[linear-gradient(180deg,var(--bg-deep)_0%,var(--bg-base)_100%)]">
+    <div className="min-h-screen relative overflow-x-hidden bg-[linear-gradient(180deg,var(--bg-deep)_0%,var(--bg-base)_100%)] bg-grid-pattern">
       {/* Background glowing lights */}
-      <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-indigo-500/5 filter blur-[120px] pointer-events-none" />
-      <div className="absolute top-[30vh] right-1/4 h-[400px] w-[400px] rounded-full bg-purple-500/5 filter blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 left-1/4 h-[500px] w-[500px] rounded-full bg-[var(--accent-primary)]/5 filter blur-[120px] pointer-events-none" />
+      <div className="absolute top-[30vh] right-1/4 h-[400px] w-[400px] rounded-full bg-[var(--accent-primary)]/3 filter blur-[100px] pointer-events-none" />
       
       {!hideHeaderFooter && (
-        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "py-2 bg-[var(--surface-glass)] backdrop-blur-xl border-b border-indigo-500/10 shadow-lg shadow-indigo-500/5 dark:shadow-black/20" : "py-4 bg-transparent border-b border-transparent shadow-none"}`}>
-          <div className={`mx-auto flex max-w-[1280px] items-center justify-between gap-3 px-4 lg:px-6 transition-all duration-300 ${scrolled ? "py-0" : "py-1"}`}>
-            <button type="button" onClick={() => onNavigate?.("home")} className="flex min-w-0 items-center gap-3 text-left">
-              <BrandMark className="h-9 w-9 shrink-0 text-indigo-600" iconClassName="h-[18px] w-[18px]" />
+        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "py-2 bg-[var(--surface-solid)] border-b border-[var(--surface-border)] shadow-md dark:shadow-black/40" : "py-3.5 bg-transparent border-b border-transparent shadow-none"}`}>
+          <div className="w-full flex items-center justify-between gap-3 px-6 lg:px-12 transition-all duration-300">
+            <button type="button" onClick={() => onNavigate?.("home")} className={`flex min-w-0 items-center gap-3 text-left transition-all duration-300 origin-left ${scrolled ? "scale-95" : "scale-100"}`}>
+              <BrandMark className="h-10 w-10 shrink-0 text-[var(--accent-primary)]" iconClassName="h-[22px] w-[22px]" />
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-[var(--text-primary)]">GridSense</p>
-                <p className="truncate text-[10px] text-tonal font-medium">Smart Electricity Monitoring Platform</p>
+                <p className="truncate text-base sm:text-lg font-bold text-[var(--text-primary)] tracking-tight">GridSense</p>
+                <p className="truncate text-[10px] sm:text-xs text-tonal font-semibold">Smart Electricity Monitoring Platform</p>
               </div>
             </button>
 
@@ -86,25 +89,21 @@ export default function PublicShell({ activePage, children, isAuthenticated = fa
                   Login
                 </NavButton>
               )}
-
-              <div className="ml-1 pl-1 border-l border-[var(--surface-border)]">
-                <ThemeToggle />
-              </div>
             </nav>
           </div>
         </header>
       )}
 
-      <main className={hideHeaderFooter ? "" : "pt-20 lg:pt-24"}>{children}</main>
+      <main className={hideHeaderFooter ? "" : "pt-20"}>{children}</main>
 
       {!hideHeaderFooter && (
         <footer className="border-t border-[var(--surface-border)] bg-[var(--surface-strong)] py-12 mt-16 transition-colors">
-          <div className="mx-auto max-w-[1280px] px-4 lg:px-6">
+          <div className="w-full px-6 lg:px-12">
             <div className="grid gap-8 md:grid-cols-3 text-xs text-tonal">
               {/* Brand Info */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <BrandMark className="h-8 w-8 shrink-0 text-indigo-600" iconClassName="h-4 w-4" />
+                  <BrandMark className="h-8 w-8 shrink-0 text-[var(--accent-primary)]" iconClassName="h-4 w-4" />
                   <span className="font-semibold text-sm text-[var(--text-primary)]">GridSense</span>
                 </div>
                 <p className="text-[11px] leading-relaxed max-w-xs">

@@ -75,22 +75,7 @@ export default function DeviceStatusPage({
 
   return (
     <div className="page-stack gap-3.5">
-      {/* Overview summary bar */}
-      <section className="surface-panel p-3.5">
-        <div className="page-header">
-          <div>
-            <p className="section-kicker">Device Status</p>
-            <h2 className="mt-0.5 text-lg font-semibold text-[var(--text-primary)]">Smart Electricity Meter Profile</h2>
-            <p className="mt-1 text-xs text-tonal">
-              Connection Type: Wi-Fi Meter · Location: {meter.location || "Home"}
-            </p>
-          </div>
-          <span className="status-pill !border-emerald-500/20 !bg-emerald-500/10 !text-emerald-500 font-semibold flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            Connected
-          </span>
-        </div>
-      </section>
+
 
       {/* Restructured Profile Grid */}
       <section className="grid gap-3.5 lg:grid-cols-3">

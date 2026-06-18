@@ -161,21 +161,7 @@ export default function AlertsPage({ alerts: propAlerts = [] }) {
 
   return (
     <div className="page-stack gap-3.5">
-      {/* Dynamic Header Overview */}
-      <section className="surface-panel p-3.5">
-        <div className="page-header">
-          <div>
-            <p className="section-kicker">Grid Notifications</p>
-            <h2 className="mt-0.5 text-lg font-semibold text-[var(--text-primary)]">Alert Command Center</h2>
-            <p className="mt-1 text-xs text-tonal">
-              Audit log of telemetric anomalies and load alerts.
-            </p>
-          </div>
-          <span className="status-pill !border-rose-500/20 !bg-rose-500/10 !text-rose-500 font-semibold">
-            {activeAlerts.length} Active Events
-          </span>
-        </div>
-      </section>
+
 
       {/* Alert Metrics Section */}
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

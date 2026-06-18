@@ -66,8 +66,8 @@ export default function BillingPage({ bill, latestReading, billingForecast = [] 
   const fixedChargeValue = bill.fixedCharge || 10;
   
   const costBreakdownData = [
-    { name: "Energy Charges", value: energyChargeValue || 50, color: "#6366f1" }, // Indigo
-    { name: "Fixed Charges", value: fixedChargeValue || 10, color: "#f59e0b" },  // Amber
+    { name: "Energy Charges", value: energyChargeValue || 50, color: "#386641" }, // Forest Green
+    { name: "Fixed Charges", value: fixedChargeValue || 10, color: "#cf5b36" },  // Terracotta
   ];
 
   // AreaChart billing trend: map from billingForecast
@@ -79,18 +79,11 @@ export default function BillingPage({ bill, latestReading, billingForecast = [] 
 
   return (
     <div className="page-stack gap-3.5 animate-fade-up">
-      {/* Header Overview */}
-      <section className="surface-panel p-3.5">
-        <div className="page-header">
-          <div>
-            <p className="section-kicker">Consumption & Slabs</p>
-            <h2 className="mt-0.5 text-lg font-semibold text-[var(--text-primary)]">Billing & Tariff Analytics</h2>
-            <p className="mt-1 text-xs text-tonal">
-              Cycle: {bill.billingCycle} · Meter ID: {meterId} · Category: {tariffLabel}
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Compact Metadata Row */}
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-tonal px-1">
+        <span>Service Connection: <span className="font-mono font-semibold text-[var(--text-primary)]">{meterId}</span></span>
+        <span>Cycle: <span className="font-semibold text-[var(--text-primary)]">{bill.billingCycle}</span> · <span className="font-semibold text-[var(--text-primary)]">{tariffLabel}</span></span>
+      </div>
 
       {/* 3-KPI Analytics Row */}
       <section className="grid gap-3 sm:grid-cols-3">
@@ -98,13 +91,13 @@ export default function BillingPage({ bill, latestReading, billingForecast = [] 
           label="Current Month Estimate"
           value={formatCurrency(finalBill)}
           note={`Billing Cycle: ${bill.billingCycle}`}
-          dotColor="bg-indigo-500"
+          dotColor="bg-[var(--accent-primary)]"
         />
         <SummaryTile
           label="Units Consumed"
           value={formatUnits(monthlyUnits)}
           note="Total active energy registered"
-          dotColor="bg-purple-500"
+          dotColor="bg-[#cf5b36]"
         />
         <SummaryTile
           label="Projected Next Bill"
@@ -142,10 +135,10 @@ export default function BillingPage({ bill, latestReading, billingForecast = [] 
                 <Tooltip
                   formatter={(value) => [formatCurrency(value), "Charge"]}
                   contentStyle={{
-                    background: isDark ? "rgba(3, 7, 18, 0.96)" : "rgba(255, 255, 255, 0.98)",
-                    border: isDark ? "1px solid rgba(99, 102, 241, 0.18)" : "1px solid rgba(203, 213, 225, 0.85)",
+                    background: isDark ? "var(--surface-solid)" : "rgba(255, 255, 255, 0.98)",
+                    border: "1px solid var(--surface-border)",
                     borderRadius: "12px",
-                    color: isDark ? "#fff" : "#111827",
+                    color: isDark ? "var(--text-primary)" : "#111827",
                   }}
                 />
               </PieChart>
@@ -179,8 +172,8 @@ export default function BillingPage({ bill, latestReading, billingForecast = [] 
                 <AreaChart data={billingTrendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="billingGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.24} />
-                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
+                      <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.24} />
+                      <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke={isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)"} />
@@ -189,14 +182,14 @@ export default function BillingPage({ bill, latestReading, billingForecast = [] 
                   <Tooltip
                     formatter={(value) => [formatCurrency(value), "Estimated Bill"]}
                     contentStyle={{
-                      background: isDark ? "rgba(3, 7, 18, 0.96)" : "rgba(255, 255, 255, 0.98)",
-                      border: isDark ? "1px solid rgba(99, 102, 241, 0.18)" : "1px solid rgba(203, 213, 225, 0.85)",
+                      background: isDark ? "var(--surface-solid)" : "rgba(255, 255, 255, 0.98)",
+                      border: "1px solid var(--surface-border)",
                       borderRadius: "12px",
-                      color: isDark ? "#fff" : "#111827",
+                      color: isDark ? "var(--text-primary)" : "#111827",
                     }}
-                    labelStyle={{ color: isDark ? "#cbd5e1" : "#64748b" }}
+                    labelStyle={{ color: isDark ? "var(--text-secondary)" : "#64748b" }}
                   />
-                  <Area type="monotone" dataKey="bill" stroke="#6366f1" strokeWidth={2} fillOpacity={1} fill="url(#billingGrad)" />
+                  <Area type="monotone" dataKey="bill" stroke="var(--accent-primary)" strokeWidth={2} fillOpacity={1} fill="url(#billingGrad)" />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (

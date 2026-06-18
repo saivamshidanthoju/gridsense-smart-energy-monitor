@@ -116,6 +116,11 @@ function AppContent() {
     };
   }, []);
 
+  // Reset scroll to top on page navigation
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [route]);
+
   useEffect(() => {
     let ignore = false;
 
@@ -232,7 +237,7 @@ function AppContent() {
     saveStoredSession(nextSession);
     setDashboardState(INITIAL_DASHBOARD_STATE);
     setSession(nextSession);
-    setTheme("dark");
+    setTheme("light");
     navigateToPage("dashboard", true);
   }
 

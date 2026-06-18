@@ -52,21 +52,7 @@ export default function SettingsPage({ user, meter, bill, authLabel }) {
 
   return (
     <div className="page-stack gap-3.5">
-      {/* Account Settings Overview */}
-      <section className="surface-panel p-3.5">
-        <div className="page-header">
-          <div>
-            <p className="section-kicker">Account Audits</p>
-            <h2 className="mt-0.5 text-lg font-semibold text-[var(--text-primary)]">System Configurations</h2>
-            <p className="mt-1 text-xs text-tonal">
-              Manage account preferences, credentials, and savings logs.
-            </p>
-          </div>
-          <span className="status-pill !border-emerald-500/20 !bg-emerald-500/10 !text-emerald-500 font-semibold">
-            Registry Active
-          </span>
-        </div>
-      </section>
+
 
       {/* Profile summary rows */}
       <section className="grid gap-3.5 lg:grid-cols-3">

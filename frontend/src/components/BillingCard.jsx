@@ -44,7 +44,7 @@ export default function BillingCard({ bill, compact = false }) {
           <p className="mt-2 max-w-2xl text-sm leading-7 text-tonal">Current month energy translated into a live Telangana bill estimate.</p>
         </div>
 
-        <div className="rounded-full border border-cyan-400/20 bg-cyan-500/10 px-4 py-2 text-sm font-medium text-cyan-700 dark:text-cyan-100">
+        <div className="rounded-full border border-[var(--accent-primary)]/20 bg-[var(--surface-soft)] px-4 py-2 text-sm font-medium text-[var(--accent-primary)]">
           {bill.status}
         </div>
       </div>

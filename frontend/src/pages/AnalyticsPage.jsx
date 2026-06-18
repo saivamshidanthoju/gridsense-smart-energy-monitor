@@ -55,17 +55,10 @@ export default function AnalyticsPage({ history = [] }) {
   return (
     <div className="page-stack">
       <section className="surface-panel p-4 lg:p-5">
-        <div className="page-header">
-          <div>
-            <p className="section-kicker">Analytics</p>
-            <h2 className="mt-1 section-heading">Usage insights</h2>
-          </div>
-          <span className="status-pill">{qualityLabel}</span>
-        </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <MetricTile label="Usage level" value={usageLevel} note="Based on recent power use" />
-          <MetricTile label="Readings checked" value={sampleCount} note="Recent meter readings" />
+          <MetricTile label="Readings checked" value={`${sampleCount} (${qualityLabel})`} note="Recent meter readings" />
           <MetricTile label="Last updated" value={formatTimestamp(latestReading?.timestamp)} note="Most recent update" />
           <MetricTile label="Average power" value={`${averagePower.toFixed(0)} W`} note="Typical recent usage" />
         </div>

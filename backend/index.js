@@ -116,14 +116,18 @@ function jitter(min, max) {
 function createBaseReading(meterId, timestamp) {
   const seed = meterId.split("").reduce((total, character) => total + character.charCodeAt(0), 0);
   const voltage = 226 + (seed % 7);
-  const current = 1.8 + (seed % 5) * 0.18;
-  const power = Math.round(voltage * current);
-  const energyKWh = 10 + (seed % 8) * 0.4;
+  
+  // Power draw strictly between 10 to 20 W
+  const power = 10 + (seed % 11); // 10 to 20 W
+  const current = Number((power / voltage).toFixed(3));
+  
+  // Initialize cumulative energy reading between 100 and 120 kWh
+  const energyKWh = 100 + (seed % 5) * 5; // 100 to 120 units
 
   return {
     meterId,
     voltage: Number(voltage.toFixed(1)),
-    current: Number(current.toFixed(2)),
+    current,
     power,
     energyKWh: Number(energyKWh.toFixed(2)),
     timestamp: timestamp.toISOString(),
@@ -132,8 +136,11 @@ function createBaseReading(meterId, timestamp) {
 
 function createNextReading(previousReading, timestamp) {
   const voltage = clamp(previousReading.voltage + jitter(-2.8, 3.1), 218, 242);
-  const current = clamp(previousReading.current + jitter(-0.22, 0.26), 1.2, 4.8);
-  const power = Math.round(voltage * current);
+  
+  // Fluctuate power draw between 10 to 20 W
+  const power = clamp(previousReading.power + Math.round(jitter(-1.5, 1.8)), 10, 20);
+  const current = Number((power / voltage).toFixed(3));
+  
   const elapsedHours = Math.max(
     SIMULATION_INTERVAL_MS / 3600000,
     (timestamp.getTime() - new Date(previousReading.timestamp).getTime()) / 3600000,
@@ -142,7 +149,7 @@ function createNextReading(previousReading, timestamp) {
   return {
     meterId: previousReading.meterId,
     voltage: Number(voltage.toFixed(1)),
-    current: Number(current.toFixed(2)),
+    current,
     power,
     energyKWh: Number((previousReading.energyKWh + (power / 1000) * elapsedHours).toFixed(3)),
     timestamp: timestamp.toISOString(),

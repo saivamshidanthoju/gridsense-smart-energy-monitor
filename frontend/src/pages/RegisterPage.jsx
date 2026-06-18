@@ -3,14 +3,17 @@ import AuthShell from "../components/AuthShell";
 import { useTheme } from "../hooks/useTheme";
 import { registerUser as apiRegisterUser } from "../services/authApi";
 
-function FormField({ label, isDark, ...props }) {
+function FormField({ label, ...props }) {
   return (
-    <label className="block">
-      <span className={`mb-2 block text-[11px] font-semibold uppercase ${isDark ? "text-white/68" : "text-slate-700"}`}>
+    <label className="block text-left">
+      <span className="mb-1.5 block text-xs font-semibold text-[var(--text-secondary)]">
         {label}
       </span>
-      <div className="surface-card-muted focus-ring flex items-center gap-3 px-4 py-3">
-        <input {...props} className={`w-full bg-transparent text-sm outline-none ${isDark ? "text-white" : "text-slate-900"}`} />
+      <div className="flex items-center bg-[var(--surface-soft)] border border-[var(--surface-border)] rounded px-3.5 py-3 focus-within:border-[var(--accent-primary)] transition-colors">
+        <input 
+          {...props} 
+          className="w-full bg-transparent text-sm outline-none text-[var(--text-primary)] placeholder-slate-500" 
+        />
       </div>
     </label>
   );
@@ -32,7 +35,6 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
   function updateField(field) {
     return (event) => {
       const { type, checked, value } = event.target;
-
       setForm((current) => ({
         ...current,
         [field]: type === "checkbox" ? checked : value,
@@ -49,7 +51,12 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
     const meterId = form.meterId.trim();
 
     if (!name || !email || !meterId || !form.password || !form.confirmPassword) {
-      setError("Please complete every field before creating your account.");
+      setError("Please fill in all the required form fields.");
+      return;
+    }
+
+    if (!meterId.startsWith("SC-")) {
+      setError("Service Connection Number must start with 'SC-' prefix (e.g. SC-104829375).");
       return;
     }
 
@@ -59,12 +66,12 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
     }
 
     if (form.password.length < 8) {
-      setError("Passwords must be at least 8 characters long.");
+      setError("Password must be at least 8 characters long.");
       return;
     }
 
     if (form.password !== form.confirmPassword) {
-      setError("Password and confirmation do not match.");
+      setError("Passwords do not match.");
       return;
     }
 
@@ -85,7 +92,7 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
         authLabel: "Signed in",
       });
     } catch (submissionError) {
-      setError(submissionError.message || "Unable to create your account right now.");
+      setError(submissionError.message || "Unable to register connection right now.");
     } finally {
       setLoading(false);
     }
@@ -93,26 +100,30 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
 
   return (
     <AuthShell activePage="signup" onNavigate={onNavigate}>
-      <div>
-        <h1 className="text-2xl font-semibold text-[var(--text-primary)]">Create Your Account</h1>
-        <p className="mt-1.5 text-xs text-tonal">
-          Register with your Service Connection / Meter Number to start tracking your energy footprint.
-        </p>
+      <div className="space-y-6">
+        
+        {/* Top Header */}
+        <div className="text-left space-y-1">
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] tracking-tight">Create Account</h1>
+          <p className="text-xs text-[var(--text-secondary)]">
+            Link your smart meter and start monitoring electricity usage.
+          </p>
+        </div>
 
         {error ? (
-          <div className={`mt-4 rounded-[10px] border px-4 py-3 text-sm ${isDark ? "border-rose-500/20 bg-rose-500/10 text-rose-100" : "border-rose-200 bg-rose-50 text-rose-700"}`}>
+          <div className="rounded border border-rose-500/20 bg-rose-500/10 px-3 py-2.5 text-xs text-rose-300 text-left">
             {error}
           </div>
         ) : null}
 
-        <form className="mt-5 space-y-4" onSubmit={handleSubmit} noValidate>
+        {/* Register Form */}
+        <form className="space-y-5" onSubmit={handleSubmit} noValidate>
           <FormField
             label="Full Name"
             type="text"
             name="name"
-            placeholder="Enter your name"
+            placeholder="Enter your full name"
             autoComplete="name"
-            isDark={isDark}
             value={form.name}
             onChange={updateField("name")}
           />
@@ -121,20 +132,18 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
             label="Email Address"
             type="email"
             name="email"
-            placeholder="Enter your email"
+            placeholder="name@domain.com"
             autoComplete="email"
-            isDark={isDark}
             value={form.email}
             onChange={updateField("email")}
           />
 
           <FormField
-            label="Service Connection / Meter Number"
+            label="Service Connection Number"
             type="text"
             name="meterId"
-            placeholder="SC-104829375"
+            placeholder="SC-XXXXXXXXX (e.g. SC-104829375)"
             autoComplete="off"
-            isDark={isDark}
             value={form.meterId}
             onChange={updateField("meterId")}
           />
@@ -143,49 +152,61 @@ export default function RegisterPage({ onAuthenticated, onNavigate, onSwitchToLo
             label="Password"
             type={form.showPassword ? "text" : "password"}
             name="password"
-            placeholder="Create a password (min 8 chars)"
+            placeholder="Min 8 chars"
             autoComplete="new-password"
-            isDark={isDark}
             value={form.password}
             onChange={updateField("password")}
           />
 
           <FormField
-            label="Confirm password"
+            label="Confirm Password"
             type={form.showPassword ? "text" : "password"}
             name="confirmPassword"
-            placeholder="Confirm your password"
+            placeholder="Re-enter password"
             autoComplete="new-password"
-            isDark={isDark}
             value={form.confirmPassword}
             onChange={updateField("confirmPassword")}
           />
 
-          <label className={`inline-flex items-center gap-2 text-sm ${isDark ? "text-white/76" : "text-slate-700"}`}>
-            <input
-              type="checkbox"
-              checked={form.showPassword}
-              onChange={updateField("showPassword")}
-              className="h-4 w-4 rounded border-slate-300 accent-cyan-600"
-            />
-            Show password
-          </label>
+          <div className="flex items-center text-xs justify-between pt-0.5">
+            <label className="inline-flex items-center gap-2 text-[var(--text-secondary)] cursor-pointer font-medium">
+              <input
+                type="checkbox"
+                checked={form.showPassword}
+                onChange={updateField("showPassword")}
+                className="h-4 w-4 rounded border-[var(--surface-border-strong)] bg-[var(--surface-soft)] text-[var(--accent-primary)] focus:ring-0 cursor-pointer"
+              />
+              <span>Show passwords</span>
+            </label>
+          </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="primary-button w-full px-4 py-3 text-sm disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded bg-[var(--accent-primary)] hover:opacity-90 py-2.5 text-xs font-semibold text-white transition active:scale-[0.98] shadow shadow-[var(--accent-primary)]/10"
           >
-            {loading ? "Creating account..." : "Register & Connect"}
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
+
+          <p className="text-[10px] text-center text-[var(--text-tertiary)] leading-normal px-2">
+            By creating an account, you agree to our{" "}
+            <a href="#" className="underline hover:text-[var(--text-secondary)] transition">Terms of Service</a>{" "}
+            and{" "}
+            <a href="#" className="underline hover:text-[var(--text-secondary)] transition">Privacy Policy</a>.
+          </p>
         </form>
 
-        <p className="mt-5 text-center text-sm text-tonal">
-          Already registered?{" "}
-          <button type="button" onClick={onSwitchToLogin} className="font-semibold text-[var(--accent-secondary)]">
-            Log in here
+        <p className="text-center text-xs text-[var(--text-secondary)]">
+          Already registered connection?{" "}
+          <button 
+            type="button" 
+            onClick={onSwitchToLogin} 
+            className="font-semibold text-[var(--accent-primary)] hover:opacity-80 transition"
+          >
+            Sign In
           </button>
         </p>
+
       </div>
     </AuthShell>
   );

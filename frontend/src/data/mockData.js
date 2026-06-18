@@ -19,20 +19,33 @@ function jitter(min, max) {
 }
 
 function createBaseReading(meterId = DEFAULT_METER_ID, timestamp = new Date()) {
+  const seed = meterId.split("").reduce((total, character) => total + character.charCodeAt(0), 0);
+  const voltage = 226 + (seed % 7);
+  
+  // Power draw strictly between 10 to 20 W
+  const power = 10 + (seed % 11); // 10 to 20 W
+  const current = Number((power / voltage).toFixed(3));
+  
+  // Initialize cumulative energy reading between 100 and 120 kWh
+  const energyKWh = 100 + (seed % 5) * 5; // 100 to 120 units
+
   return {
     meterId,
-    voltage: 230,
-    current: 2.4,
-    power: 552,
-    energyKWh: 12.8,
+    voltage: +voltage.toFixed(1),
+    current,
+    power,
+    energyKWh: +energyKWh.toFixed(2),
     timestamp: timestamp.toISOString(),
   };
 }
 
 function createNextReading(previousReading, timestamp) {
   const voltage = clamp(previousReading.voltage + jitter(-2.8, 3.1), 218, 242);
-  const current = clamp(previousReading.current + jitter(-0.22, 0.26), 1.2, 4.8);
-  const power = +(voltage * current).toFixed(0);
+  
+  // Fluctuate power draw between 10 to 20 W
+  const power = clamp(previousReading.power + Math.round(jitter(-1.5, 1.8)), 10, 20);
+  const current = Number((power / voltage).toFixed(3));
+  
   const elapsedHours = Math.max(
     SIMULATION_INTERVAL_MS / 3600000,
     (timestamp.getTime() - new Date(previousReading.timestamp).getTime()) / 3600000,
@@ -41,7 +54,7 @@ function createNextReading(previousReading, timestamp) {
   return {
     meterId: previousReading.meterId,
     voltage: +voltage.toFixed(1),
-    current: +current.toFixed(2),
+    current,
     power,
     energyKWh: +(previousReading.energyKWh + (power / 1000) * elapsedHours).toFixed(3),
     timestamp: timestamp.toISOString(),
@@ -192,7 +205,8 @@ function getRecentDayLabels(count = 7) {
 
 export function buildDailyUsageSeries({ history = [], latestReading = null, meterId = DEFAULT_METER_ID } = {}) {
   const latest = latestReading || history[history.length - 1] || getMockLatestReading(meterId);
-  const baseline = Math.max(latest.energyKWh / 7, latest.power / 4200, 0.8);
+  const currentDay = new Date(latest.timestamp).getDate() || 14;
+  const baseline = Math.max(3.0, Math.min(8.0, latest.energyKWh / currentDay));
 
   return getRecentDayLabels(7).map((day, index) => {
     const drift = 0.86 + index * 0.045 + Math.sin((latest.current + index) * 0.75) * 0.08;

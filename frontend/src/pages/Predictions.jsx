@@ -120,16 +120,7 @@ export default function Predictions({
 
   return (
     <div className="page-stack gap-3.5">
-      {/* Header section */}
-      <section className="surface-panel p-3.5">
-        <div>
-          <p className="section-kicker">AI Forecast</p>
-          <h2 className="mt-0.5 text-lg font-semibold text-[var(--text-primary)]">Electricity Bill Forecast</h2>
-          <p className="mt-1 text-xs text-tonal">
-            Forecast based on current energy consumption patterns.
-          </p>
-        </div>
-      </section>
+
 
       {/* Top KPI Section */}
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -137,14 +128,14 @@ export default function Predictions({
           label="Current Bill"
           value={formatCurrency(currentBill.finalPayableEstimate)}
           note="Charges incurred so far"
-          toneColor="text-blue-500"
+          toneColor="text-[var(--text-secondary)]"
           icon="🔵"
         />
         <KPICard
           label="Predicted Bill"
           value={formatCurrency(projectedBill.finalPayableEstimate)}
           note="Estimated month-end bill"
-          toneColor="text-orange-500"
+          toneColor="text-[var(--accent-primary)]"
           icon="🟠"
         />
         <KPICard
@@ -203,12 +194,12 @@ export default function Predictions({
                   name === "actual" ? "Current Usage" : "Predicted Consumption",
                 ]}
                 contentStyle={{
-                  background: isDark ? "rgba(15, 23, 42, 0.96)" : "rgba(255, 255, 255, 0.98)",
-                  border: isDark ? "1px solid rgba(148, 163, 184, 0.18)" : "1px solid rgba(203, 213, 225, 0.85)",
+                  background: isDark ? "var(--surface-solid)" : "rgba(255, 255, 255, 0.98)",
+                  border: "1px solid var(--surface-border)",
                   borderRadius: "12px",
-                  color: isDark ? "#fff" : "#111827",
+                  color: isDark ? "var(--text-primary)" : "#111827",
                 }}
-                labelStyle={{ color: isDark ? "#cbd5e1" : "#64748b" }}
+                labelStyle={{ color: isDark ? "var(--text-secondary)" : "#64748b" }}
               />
               <ReferenceLine
                 x={`Day ${currentDay}`}
@@ -225,7 +216,7 @@ export default function Predictions({
                 type="monotone"
                 dataKey="actual"
                 name="actual"
-                stroke="#3b82f6"
+                stroke="#4e6b8c"
                 strokeWidth={2.5}
                 dot={false}
                 activeDot={{ r: 5 }}
@@ -234,7 +225,7 @@ export default function Predictions({
                 type="monotone"
                 dataKey="predicted"
                 name="predicted"
-                stroke="#f97316"
+                stroke="#cf5b36"
                 strokeWidth={2.5}
                 strokeDasharray="5 5"
                 dot={false}

@@ -31,30 +31,30 @@ export default function DailyUsageChart({ data = [], title = "Daily kWh Consumpt
             <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke={isDark ? "rgba(255,255,255,0.06)" : "rgba(15,23,42,0.06)"}
+                stroke={isDark ? "#383633" : "#e6dfd3"}
               />
               <XAxis
                 dataKey="day"
-                tick={{ fill: isDark ? "#71717a" : "#64748b", fontSize: 11 }}
+                tick={{ fill: isDark ? "#b4ada3" : "#4a5754", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: isDark ? "#71717a" : "#64748b", fontSize: 11 }}
+                tick={{ fill: isDark ? "#b4ada3" : "#4a5754", fontSize: 11 }}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
                 formatter={(value) => [formatUsage(value), "Usage"]}
                 contentStyle={{
-                  background: isDark ? "rgba(15, 23, 42, 0.96)" : "rgba(255, 255, 255, 0.98)",
-                  border: isDark ? "1px solid rgba(148, 163, 184, 0.18)" : "1px solid rgba(203, 213, 225, 0.85)",
+                  background: isDark ? "#242321" : "#ffffff",
+                  border: isDark ? "1px solid #383633" : "1px solid #e6dfd3",
                   borderRadius: "12px",
-                  color: isDark ? "#fff" : "#111827",
+                  color: isDark ? "#f4f0e6" : "#1c2826",
                 }}
-                labelStyle={{ color: isDark ? "#cbd5e1" : "#64748b" }}
+                labelStyle={{ color: isDark ? "#b4ada3" : "#4a5754" }}
               />
-              <Bar dataKey="kWh" fill="#f97316" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="kWh" fill="#c26d4b" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         ) : (

@@ -31,42 +31,42 @@ export default function BillingChart({ data = [], title = "Monthly Bill Predicti
             <AreaChart data={data} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="billingGradient" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="5%" stopColor="#d97706" stopOpacity={0.45} />
-                  <stop offset="95%" stopColor="#d97706" stopOpacity={0.04} />
+                  <stop offset="5%" stopColor="#cf5b36" stopOpacity={0.45} />
+                  <stop offset="95%" stopColor="#cf5b36" stopOpacity={0.04} />
                 </linearGradient>
               </defs>
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke={isDark ? "rgba(148,163,184,0.16)" : "rgba(203,213,225,0.75)"}
+                stroke={isDark ? "#383633" : "#e6dfd3"}
               />
               <XAxis
                 dataKey="month"
-                tick={{ fill: isDark ? "#94a3b8" : "#64748b", fontSize: 12 }}
+                tick={{ fill: isDark ? "#b4ada3" : "#4a5754", fontSize: 12 }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fill: isDark ? "#94a3b8" : "#64748b", fontSize: 12 }}
+                tick={{ fill: isDark ? "#b4ada3" : "#4a5754", fontSize: 12 }}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
                 formatter={(value) => [formatCurrency(value), "Predicted Bill"]}
                 contentStyle={{
-                  background: isDark ? "rgba(15, 23, 42, 0.96)" : "rgba(255, 255, 255, 0.98)",
-                  border: isDark ? "1px solid rgba(148, 163, 184, 0.18)" : "1px solid rgba(203, 213, 225, 0.85)",
+                  background: isDark ? "#242321" : "#ffffff",
+                  border: isDark ? "1px solid #383633" : "1px solid #e6dfd3",
                   borderRadius: "12px",
-                  color: isDark ? "#fff" : "#111827",
+                  color: isDark ? "#f4f0e6" : "#1c2826",
                 }}
-                labelStyle={{ color: isDark ? "#cbd5e1" : "#64748b" }}
+                labelStyle={{ color: isDark ? "#b4ada3" : "#4a5754" }}
               />
               <Area
                 type="monotone"
                 dataKey="bill"
-                stroke="#d97706"
+                stroke="#cf5b36"
                 strokeWidth={2.5}
                 fill="url(#billingGradient)"
-                dot={{ r: 3.5, fill: "#d97706", strokeWidth: 0 }}
+                dot={{ r: 3.5, fill: "#cf5b36", strokeWidth: 0 }}
                 activeDot={{ r: 5 }}
               />
             </AreaChart>

@@ -159,7 +159,7 @@ export default function Navbar({
                   {user?.profilePicture ? (
                     <img src={user.profilePicture} alt={user.name} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl object-cover border border-[var(--surface-border)]" />
                   ) : (
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-500 text-sm font-semibold border border-indigo-500/20">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--surface-soft)] text-[var(--accent-primary)] text-sm font-semibold border border-[var(--surface-border-strong)]">
                       {initials}
                     </span>
                   )}
@@ -270,7 +270,7 @@ export default function Navbar({
                 {editProfilePic ? (
                   <img src={editProfilePic} alt="Preview" className="h-full w-full object-cover" />
                 ) : (
-                  <span className="text-base font-semibold text-indigo-500">{initials}</span>
+                  <span className="text-base font-semibold text-[var(--accent-primary)]">{initials}</span>
                 )}
               </div>
               <div className="flex-1">
@@ -279,7 +279,7 @@ export default function Navbar({
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="block w-full text-xs text-tonal file:mr-2.5 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-500 hover:file:bg-indigo-500/20 file:cursor-pointer"
+                  className="block w-full text-xs text-tonal file:mr-2.5 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[var(--surface-soft)] file:text-[var(--accent-primary)] hover:file:bg-[var(--surface-border-strong)] file:cursor-pointer"
                 />
               </div>
             </div>
@@ -292,7 +292,7 @@ export default function Navbar({
                 required
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-indigo-500/50 focus:outline-none"
+                className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-[var(--accent-primary)]/50 focus:outline-none"
               />
             </div>
 
@@ -304,7 +304,7 @@ export default function Navbar({
                 required
                 value={editEmail}
                 onChange={(e) => setEditEmail(e.target.value)}
-                className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-indigo-500/50 focus:outline-none"
+                className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-[var(--accent-primary)]/50 focus:outline-none"
               />
             </div>
 
@@ -329,7 +329,7 @@ export default function Navbar({
 
             {/* Password update section */}
             <div className="border-t border-[var(--surface-border)] pt-3.5 space-y-3">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-500">Update Password (Optional)</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--accent-primary)]">Update Password (Optional)</p>
               
               <div>
                 <label className="block text-[10px] font-semibold uppercase tracking-wider text-tonal mb-1">Current Password</label>
@@ -337,7 +337,7 @@ export default function Navbar({
                   type="password"
                   value={currPassword}
                   onChange={(e) => setCurrPassword(e.target.value)}
-                  className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-indigo-500/50 focus:outline-none"
+                  className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-[var(--accent-primary)]/50 focus:outline-none"
                 />
               </div>
 
@@ -348,7 +348,7 @@ export default function Navbar({
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-indigo-500/50 focus:outline-none"
+                    className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-[var(--accent-primary)]/50 focus:outline-none"
                   />
                 </div>
                 <div>
@@ -357,7 +357,7 @@ export default function Navbar({
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-indigo-500/50 focus:outline-none"
+                    className="w-full rounded-lg border border-[var(--surface-border)] bg-[var(--surface-soft)] py-1.5 px-3 text-xs text-[var(--text-primary)] transition focus:border-[var(--accent-primary)]/50 focus:outline-none"
                   />
                 </div>
               </div>

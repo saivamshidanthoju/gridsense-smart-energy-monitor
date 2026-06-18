@@ -180,19 +180,13 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
     <div className="page-stack animate-fade-up">
       {/* Account Info and Overview */}
       <section className="surface-panel p-4 lg:p-5">
-        <div className="page-header">
-          <div>
-            <p className="section-kicker">Transaction Desk</p>
-            <h2 className="mt-1 section-heading">Billing & Payments Overview</h2>
-            <p className="text-xs text-tonal mt-1">Meter ID: {meterId} · Linked Account</p>
-          </div>
-          <span className={`status-pill ${paymentStatus === "Paid" ? "!border-emerald-500/20 !bg-emerald-500/10 !text-emerald-500 font-semibold" : "!border-rose-500/20 !bg-rose-500/10 !text-rose-500 font-semibold"}`}>
-            {paymentStatus}
-          </span>
+        <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-tonal border-b border-[var(--surface-border)] pb-3.5 mb-4">
+          <span>Linked Meter ID: <span className="font-mono font-semibold text-[var(--text-primary)]">{meterId}</span></span>
+          <span>Billing Cycle: <span className="font-semibold text-[var(--text-primary)]">{billMonth}</span></span>
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <DetailTile label="Current Bill Amount" value={formatCurrency(payableAmount)} note={`Cycle: ${billMonth}`} dotColor="bg-indigo-500" />
+          <DetailTile label="Current Bill Amount" value={formatCurrency(payableAmount)} note={`Cycle: ${billMonth}`} dotColor="bg-[var(--accent-primary)]" />
           <DetailTile label="Amount Due" value={formatCurrency(amountDue)} note={paidRecord ? "Balance cleared" : "Outstanding balance"} dotColor={paidRecord ? "bg-emerald-500" : "bg-rose-500"} />
           <DetailTile label="Due Date" value={dueDate} note={paidRecord ? "No pending actions" : "Pay before late fee applies"} dotColor="bg-amber-500" />
           <DetailTile label="Payment Status" value={paymentStatus} note={paidRecord ? `Settled on ${formatDate(paidRecord.paidAt)}` : "Awaiting Transaction"} dotColor={paidRecord ? "bg-emerald-500" : "bg-rose-500"} />
@@ -221,7 +215,7 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
                   onClick={() => setSelectedMethod(method.id)}
                   className={`rounded-[12px] border px-4 py-4 text-left transition-colors hover-lift ${
                     active
-                      ? "border-[var(--accent-primary)] bg-[rgba(99,102,241,0.08)]"
+                      ? "border-[var(--accent-primary)] bg-[var(--surface-soft)]"
                       : "border-[var(--surface-border)] bg-[var(--surface-solid)] hover:bg-[var(--surface-soft)]"
                   }`}
                   disabled={Boolean(paidRecord)}
@@ -327,7 +321,7 @@ export default function PaymentsPage({ token, user, bill, latestReading }) {
               {displayedPayments.length ? (
                 displayedPayments.map((payment) => (
                   <tr key={payment.id || payment.paymentId} className="hover:bg-[var(--surface-soft)] transition-colors">
-                    <td className="font-semibold text-indigo-500">{payment.receiptNumber || payment.paymentId}</td>
+                    <td className="font-semibold text-[var(--accent-primary)]">{payment.receiptNumber || payment.paymentId}</td>
                     <td>{payment.billMonth}</td>
                     <td>{payment.method}</td>
                     <td>{formatDate(payment.paidAt)}</td>
