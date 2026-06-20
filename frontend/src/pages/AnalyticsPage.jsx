@@ -1,5 +1,3 @@
-import { summarizeHistory } from "../data/mockData";
-
 function formatTimestamp(timestamp) {
   if (!timestamp) {
     return "Waiting";
@@ -27,6 +25,18 @@ function range(values) {
   }
 
   return Math.max(...values) - Math.min(...values);
+}
+
+function summarizeHistory(history = []) {
+  if (!history.length) {
+    return {
+      totalEnergy: 0,
+    };
+  }
+
+  return {
+    totalEnergy: history[history.length - 1].energyKWh,
+  };
 }
 
 function MetricTile({ label, value, note }) {

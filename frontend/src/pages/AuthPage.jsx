@@ -115,7 +115,7 @@ export default function AuthPage({ onAuthenticated }) {
                 value={form.meterId}
                 onChange={updateField("meterId")}
                 required
-                placeholder="ESP32-A4F2"
+                placeholder="SC-104829375"
                 className="surface-card-muted focus-ring w-full px-4 py-3 text-sm outline-none"
               />
             </label>

@@ -1,11 +1,4 @@
-import { useTheme } from "../hooks/useTheme";
 import EnergyLineChart from "../components/EnergyLineChart";
-
-const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
-
-function formatNumber(value, digits = 1) {
-  return Number(value || 0).toFixed(digits);
-}
 
 function formatWholeNumber(value) {
   return new Intl.NumberFormat("en-IN", {
@@ -13,47 +6,10 @@ function formatWholeNumber(value) {
   }).format(Number(value || 0));
 }
 
-function formatCurrency(amount) {
+function formatReadingNumber(value, maximumFractionDigits = 2) {
   return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(Number(amount || 0));
-}
-
-function formatTime(timestamp) {
-  if (!timestamp) {
-    return "Waiting";
-  }
-
-  return new Date(timestamp).toLocaleTimeString("en-IN", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function formatTableTime(timestamp) {
-  if (!timestamp) {
-    return "Waiting";
-  }
-
-  return new Date(timestamp).toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function formatLastUpdated(lastUpdated) {
-  if (!lastUpdated) {
-    return "Waiting for update";
-  }
-
-  return new Date(lastUpdated).toLocaleTimeString("en-IN", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+    maximumFractionDigits,
+  }).format(Number(value || 0));
 }
 
 function formatDashboardDateTime(timestamp) {
@@ -67,28 +23,6 @@ function formatDashboardDateTime(timestamp) {
     hour: "2-digit",
     minute: "2-digit",
   });
-}
-
-function formatMeterStatus(status = "pending") {
-  const normalizedStatus = String(status || "pending").trim().toLowerCase();
-
-  if (normalizedStatus === "offline") {
-    return "Offline";
-  }
-
-  if (normalizedStatus === "pending") {
-    return "Waiting";
-  }
-
-  return "Online";
-}
-
-function getTodayConsumption(dailyUsage = []) {
-  if (!dailyUsage || !dailyUsage.length) {
-    return "0.00";
-  }
-  const latest = dailyUsage[dailyUsage.length - 1];
-  return Number(latest?.kWh || 0).toFixed(2);
 }
 
 function DashboardMetric({ label, value, unit, note, dotColor }) {
@@ -111,10 +45,8 @@ export default function Dashboard({
   user,
   latestReading,
   history = [],
-  bill,
   meter,
   meterStatus,
-  dailyUsage = [],
   alerts = [],
   lastUpdated,
 }) {
@@ -122,7 +54,7 @@ export default function Dashboard({
     return (
       <section className="surface-panel fade-rise p-6">
         <p className="section-kicker">Dashboard</p>
-        <h3 className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">No live reading yet</h3>
+        <h3 className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">Waiting for ESP32 data...</h3>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-tonal">
           The first meter reading will appear after the next data update.
         </p>
@@ -130,41 +62,39 @@ export default function Dashboard({
     );
   }
 
-  const todayConsumption = getTodayConsumption(dailyUsage);
-  const currentBillAmount = bill?.finalPayableEstimate ?? bill?.estimatedBill ?? 0;
-  const activeMeterId = user?.meterId || meter?.meterId || "SC-104829375";
+  const activeMeterId = latestReading.meterId || user?.meterId || meter?.meterId || "SC-104829375";
 
   const firstName = user?.name || "Customer";
   const activeAlerts = alerts?.filter(a => a.severity === "critical" || a.severity === "warning") || [];
 
   const metrics = [
     {
-      label: "Live Power Draw",
+      label: "Voltage",
+      value: formatReadingNumber(latestReading.voltage, 2),
+      unit: "V",
+      note: "Latest ESP32 voltage sample",
+      dotColor: latestReading.voltage < 210 || latestReading.voltage > 250 ? "bg-amber-500 animate-pulse" : "bg-emerald-500",
+    },
+    {
+      label: "Current",
+      value: formatReadingNumber(latestReading.current, 3),
+      unit: "A",
+      note: "Latest ESP32 current draw",
+      dotColor: latestReading.current >= 15 ? "bg-amber-500 animate-pulse" : "bg-emerald-500",
+    },
+    {
+      label: "Power",
       value: formatWholeNumber(latestReading.power),
       unit: "W",
-      note: latestReading.power >= 1400 ? "Peak load warning threshold" : "Optimal draw range",
+      note: "Latest active power draw",
       dotColor: latestReading.power >= 1400 ? "bg-rose-500 animate-pulse" : "bg-emerald-500",
     },
     {
-      label: "Current Consumption",
-      value: todayConsumption,
+      label: "Energy Consumption",
+      value: formatReadingNumber(latestReading.energyKWh, 3),
       unit: "kWh",
-      note: "Accumulated usage today",
+      note: "Latest cumulative meter energy",
       dotColor: "bg-emerald-500",
-    },
-    {
-      label: "Estimated Bill",
-      value: formatCurrency(currentBillAmount),
-      unit: "",
-      note: "Estimated for active cycle",
-      dotColor: "bg-indigo-500",
-    },
-    {
-      label: "System Alerts",
-      value: activeAlerts.length,
-      unit: activeAlerts.length === 1 ? "alert" : "alerts",
-      note: activeAlerts.length > 0 ? "Attention required" : "No active issues",
-      dotColor: activeAlerts.length > 0 ? "bg-rose-500" : "bg-emerald-500",
     },
   ];
 

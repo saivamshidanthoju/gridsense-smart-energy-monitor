@@ -1,20 +1,17 @@
 import {
   buildBillingForecastSeries,
-  buildDailyUsageSeries,
-  createMockUser,
-  getMockDashboardSnapshot,
-  getMockDeviceStatus,
-} from "../data/mockData";
-import { calculateTelanganaLtIDomesticBill } from "../utils/telanganaTariff";
+  calculateTelanganaLtIDomesticBill,
+} from "../utils/telanganaTariff";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000").replace(/\/$/, "");
 const SESSION_STORAGE_KEY = "smart-power-meter-session";
 const PAYMENT_HISTORY_STORAGE_KEY = "smart-power-meter-payments";
 const MOCK_TOKEN_PREFIX = "mock-session-";
+const DEFAULT_METER_ID = "SC-104829375";
 const DEMO_CREDENTIALS = {
   email: "user@gmail.com",
-  meterId: "ESP32-A4F2",
-  password: "123456",
+  meterId: DEFAULT_METER_ID,
+  password: "demo-password",
 };
 
 function isNetworkError(error) {
@@ -27,6 +24,17 @@ function isMissingDataRouteError(error) {
 
 function isMockToken(token = "") {
   return token.startsWith(MOCK_TOKEN_PREFIX);
+}
+
+function createDemoUser(overrides = {}) {
+  return {
+    id: overrides.id || `demo-${(overrides.meterId || DEFAULT_METER_ID).toLowerCase()}`,
+    name: overrides.name || "Sai Vamshi",
+    email: overrides.email || DEMO_CREDENTIALS.email,
+    meterId: overrides.meterId || DEFAULT_METER_ID,
+    role: overrides.role || "consumer",
+    createdAt: overrides.createdAt || new Date().toISOString(),
+  };
 }
 
 async function request(endpoint, options = {}) {
@@ -42,8 +50,24 @@ async function request(endpoint, options = {}) {
   return payload;
 }
 
+function withQuery(endpoint, params = {}) {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    const normalizedValue = String(value || "").trim();
+
+    if (normalizedValue) {
+      searchParams.set(key, normalizedValue);
+    }
+  });
+
+  const queryString = searchParams.toString();
+
+  return queryString ? `${endpoint}?${queryString}` : endpoint;
+}
+
 function createFallbackSession(overrides = {}) {
-  const user = createMockUser(overrides);
+  const user = createDemoUser(overrides);
 
   return {
     token: `${MOCK_TOKEN_PREFIX}${user.meterId.toLowerCase()}`,
@@ -105,6 +129,161 @@ function normalizeBillPayload(payload = {}, latestReading = null, meterId = "") 
     dueDate: rawBill.dueDate,
     status: rawBill.status,
   });
+}
+
+function toFiniteNumber(value) {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : 0;
+}
+
+function normalizeReadingPayload(payload = null) {
+  const rawReading = payload?.reading || payload?.latestReading || payload;
+
+  if (!rawReading || typeof rawReading !== "object" || !rawReading.timestamp) {
+    return null;
+  }
+
+  return {
+    meterId: rawReading.meterId || DEFAULT_METER_ID,
+    voltage: toFiniteNumber(rawReading.voltage),
+    current: toFiniteNumber(rawReading.current),
+    power: toFiniteNumber(rawReading.power),
+    energyKWh: toFiniteNumber(rawReading.energyKWh),
+    timestamp: rawReading.timestamp,
+    phaseType: rawReading.phaseType,
+    contractedLoad: rawReading.contractedLoad,
+    deviceIp: rawReading.deviceIp,
+    ipAddress: rawReading.ipAddress,
+    rssi: rawReading.rssi,
+  };
+}
+
+function normalizeHistoryPayload(payload = {}) {
+  const rawReadings = Array.isArray(payload) ? payload : payload?.readings || [];
+
+  return rawReadings
+    .map(normalizeReadingPayload)
+    .filter(Boolean)
+    .slice(-20);
+}
+
+function buildDeviceStatusFromReading(reading, meterId = DEFAULT_METER_ID) {
+  if (!reading) {
+    return null;
+  }
+
+  return {
+    meterId: reading.meterId || meterId || DEFAULT_METER_ID,
+    location: "Home",
+    status: "online",
+    firmware: "v2.4.1",
+    transport: "HTTP / MQTT ready",
+    backend: "Node.js + Express",
+    cloudDatabase: "MongoDB Atlas",
+    lastSync: reading.timestamp,
+    ipAddress: reading.deviceIp || reading.ipAddress || "Unknown",
+    wifiSignal: Number.isFinite(Number(reading.rssi)) ? `${reading.rssi} dBm` : "Unknown",
+  };
+}
+
+function buildLiveAlerts(reading, bill = null) {
+  if (!reading) {
+    return [];
+  }
+
+  const voltageWarning = reading.voltage < 210 || reading.voltage > 250;
+
+  return [
+    {
+      id: `${reading.meterId}-power`,
+      severity: reading.power > 1400 ? "critical" : "info",
+      title: reading.power > 1400 ? "Peak load warning" : "Connection stabilized",
+      message:
+        reading.power > 1400
+          ? `Power usage crossed ${reading.power} W. Consider reducing heavy appliance usage.`
+          : "Smart electricity meter is connected and transmitting usage updates in real-time.",
+      createdAt: reading.timestamp,
+    },
+    {
+      id: `${reading.meterId}-voltage`,
+      severity: voltageWarning ? "warning" : "info",
+      title: voltageWarning ? "Voltage outside expected range" : "Voltage stable",
+      message: voltageWarning
+        ? `Latest voltage is ${reading.voltage} V. Check incoming line stability.`
+        : `Line voltage is stable near ${reading.voltage} V.`,
+      createdAt: reading.timestamp,
+    },
+    {
+      id: `${reading.meterId}-billing`,
+      severity: bill?.finalPayableEstimate > 1000 ? "warning" : "info",
+      title: "Estimated bill updated",
+      message: "Estimated monthly bill updated from the latest ESP32 reading.",
+      createdAt: reading.timestamp,
+    },
+  ];
+}
+
+function getDayKey(timestamp) {
+  const date = new Date(timestamp);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Unknown";
+  }
+
+  return date.toISOString().slice(0, 10);
+}
+
+function getDayLabel(timestamp) {
+  const date = new Date(timestamp);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Reading";
+  }
+
+  return date.toLocaleDateString("en-IN", { weekday: "short" });
+}
+
+function buildDailyUsageFromReadings({ history = [], latestReading = null } = {}) {
+  const seen = new Set();
+  const readings = [...history, latestReading]
+    .filter(Boolean)
+    .filter((reading) => {
+      const key = `${reading.meterId || ""}:${reading.timestamp}`;
+
+      if (seen.has(key)) {
+        return false;
+      }
+
+      seen.add(key);
+      return true;
+    })
+    .sort((first, second) => new Date(first.timestamp).getTime() - new Date(second.timestamp).getTime());
+
+  if (!readings.length) {
+    return [];
+  }
+
+  const byDay = new Map();
+
+  readings.forEach((reading) => {
+    const key = getDayKey(reading.timestamp);
+    const energyKWh = toFiniteNumber(reading.energyKWh);
+    const current = byDay.get(key) || {
+      day: getDayLabel(reading.timestamp),
+      firstEnergy: energyKWh,
+      lastEnergy: energyKWh,
+      count: 0,
+    };
+
+    current.lastEnergy = energyKWh;
+    current.count += 1;
+    byDay.set(key, current);
+  });
+
+  return Array.from(byDay.values()).slice(-7).map((item) => ({
+    day: item.day,
+    kWh: Number((item.count > 1 ? Math.max(0, item.lastEnergy - item.firstEnergy) : item.lastEnergy).toFixed(3)),
+  }));
 }
 
 export function loadStoredSession() {
@@ -235,7 +414,7 @@ export async function loginUser(formData) {
 export async function getCurrentUser(token, fallbackUser) {
   if (isMockToken(token)) {
     return {
-      user: fallbackUser || createMockUser(),
+      user: fallbackUser || createDemoUser(),
       source: "mock",
     };
   }
@@ -251,7 +430,7 @@ export async function getCurrentUser(token, fallbackUser) {
 
     if (isNetworkError(error)) {
       return {
-        user: fallbackUser || createMockUser(),
+        user: fallbackUser || createDemoUser(),
         source: "mock",
       };
     }
@@ -260,26 +439,22 @@ export async function getCurrentUser(token, fallbackUser) {
   }
 }
 
-async function fetchLatestReadingFromBackend(token) {
-  return request("/api/readings/latest", {
+async function fetchLatestReadingFromBackend(meterId = "") {
+  return request(withQuery("/api/readings/latest", { meterId }));
+}
+
+async function fetchHistoryFromBackend(meterId = "") {
+  return request(withQuery("/api/readings/history", { meterId }));
+}
+
+async function fetchBillingFromBackend(token, meterId = "") {
+  return request(withQuery("/api/billing", { meterId }), {
     headers: buildAuthHeaders(token),
   });
 }
 
-async function fetchHistoryFromBackend(token) {
-  return request("/api/readings/history", {
-    headers: buildAuthHeaders(token),
-  });
-}
-
-async function fetchBillingFromBackend(token) {
-  return request("/api/billing", {
-    headers: buildAuthHeaders(token),
-  });
-}
-
-async function fetchAlertsFromBackend(token) {
-  return request("/api/alerts", {
+async function fetchAlertsFromBackend(token, meterId = "") {
+  return request(withQuery("/api/alerts", { meterId }), {
     headers: buildAuthHeaders(token),
   });
 }
@@ -467,7 +642,11 @@ export async function fetchPaymentHistory({ token, meterId }) {
 }
 
 export function getConnectionLabel(source, latestReading, meter) {
-  if (!latestReading?.timestamp || meter?.status === "offline") {
+  if (!latestReading?.timestamp) {
+    return "Waiting for ESP32 data";
+  }
+
+  if (meter?.status === "offline") {
     return "Meter Offline";
   }
 
@@ -496,189 +675,146 @@ function buildDashboardFromSnapshot(snapshot) {
     dailyUsage,
     billingForecast,
     source,
-    lastUpdated: latestReading?.timestamp || meter.lastSync,
+    lastUpdated: latestReading?.timestamp || meter?.lastSync || null,
     connectionLabel: getConnectionLabel(source, latestReading, meter),
   };
 }
 
-export async function fetchLatestReading(token, meterId) {
-  if (isMockToken(token)) {
-    const snapshot = getMockDashboardSnapshot(meterId);
-    return {
-      reading: snapshot.latestReading,
-      meter: snapshot.meter,
-      source: snapshot.source,
-    };
-  }
-
+export async function fetchLatestReading(meterId = "") {
   try {
-    const payload = await fetchLatestReadingFromBackend(token);
+    const payload = await fetchLatestReadingFromBackend(meterId);
+    const reading = normalizeReadingPayload(payload);
+
     return {
-      reading: payload.reading,
-      meter: payload.meter,
-      source: payload.source || "database",
+      reading,
+      meter: buildDeviceStatusFromReading(reading),
+      source: "database",
     };
   } catch (error) {
-    if (error.status === 401) {
-      throw error;
-    }
-
-    if (isNetworkError(error) || isMissingDataRouteError(error)) {
-      const snapshot = getMockDashboardSnapshot(meterId);
+    if (isMissingDataRouteError(error)) {
       return {
-        reading: snapshot.latestReading,
-        meter: snapshot.meter,
-        source: snapshot.source,
+        reading: null,
+        meter: null,
+        source: "database",
       };
     }
 
-    throw error;
+    throw new Error("Unable to connect to backend");
   }
 }
 
-export async function fetchReadingHistory(token, meterId) {
-  if (isMockToken(token)) {
-    const snapshot = getMockDashboardSnapshot(meterId);
-    return {
-      readings: snapshot.history,
-      source: snapshot.source,
-    };
-  }
-
+export async function fetchReadingHistory(meterId = "") {
   try {
-    const payload = await fetchHistoryFromBackend(token);
+    const payload = await fetchHistoryFromBackend(meterId);
     return {
-      readings: payload.readings,
-      source: payload.source || "database",
+      readings: normalizeHistoryPayload(payload),
+      source: "database",
     };
   } catch (error) {
-    if (error.status === 401) {
-      throw error;
-    }
-
-    if (isNetworkError(error) || isMissingDataRouteError(error)) {
-      const snapshot = getMockDashboardSnapshot(meterId);
+    if (isMissingDataRouteError(error)) {
       return {
-        readings: snapshot.history,
-        source: snapshot.source,
+        readings: [],
+        source: "database",
       };
     }
 
-    throw error;
+    throw new Error("Unable to connect to backend");
   }
 }
 
 export async function fetchBilling(token, meterId) {
-  if (isMockToken(token)) {
-    const snapshot = getMockDashboardSnapshot(meterId);
-    return {
-      bill: snapshot.bill,
-      source: snapshot.source,
-    };
-  }
-
-  try {
-    const payload = await fetchBillingFromBackend(token);
-    return {
-      bill: normalizeBillPayload(payload, null, meterId),
-      source: payload.source || "database",
-    };
-  } catch (error) {
-    if (error.status === 401) {
-      throw error;
-    }
-
-    if (isNetworkError(error) || isMissingDataRouteError(error)) {
-      const snapshot = getMockDashboardSnapshot(meterId);
-      return {
-        bill: snapshot.bill,
-        source: snapshot.source,
-      };
-    }
-
-    throw error;
-  }
+  const payload = await fetchBillingFromBackend(token, meterId);
+  return {
+    bill: normalizeBillPayload(payload, null, meterId),
+    source: payload.source || "database",
+  };
 }
 
-export async function fetchAlerts(token, meterId) {
-  if (isMockToken(token)) {
-    const snapshot = getMockDashboardSnapshot(meterId);
-    return {
-      alerts: snapshot.alerts,
-      source: snapshot.source,
-    };
-  }
-
-  try {
-    const payload = await fetchAlertsFromBackend(token);
-    return {
-      alerts: payload.alerts,
-      source: payload.source || "database",
-    };
-  } catch (error) {
-    if (error.status === 401) {
-      throw error;
-    }
-
-    if (isNetworkError(error) || isMissingDataRouteError(error)) {
-      const snapshot = getMockDashboardSnapshot(meterId);
-      return {
-        alerts: snapshot.alerts,
-        source: snapshot.source,
-      };
-    }
-
-    throw error;
-  }
+export async function fetchAlerts(token, meterId = "") {
+  const payload = await fetchAlertsFromBackend(token, meterId);
+  return {
+    alerts: payload.alerts || [],
+    source: payload.source || "database",
+  };
 }
 
 export async function fetchDashboardBundle({ token, meterId }) {
-  // Flow: ESP32 sensors -> cloud/backend API -> MongoDB Atlas -> React charts.
-  // When the API is unavailable, we fall back to a live mock simulation so the
-  // UI keeps updating every 3 seconds during local development.
-  if (isMockToken(token)) {
-    return buildDashboardFromSnapshot(getMockDashboardSnapshot(meterId));
-  }
-
   try {
-    const [latestPayload, historyPayload, billingPayload, alertsPayload] = await Promise.all([
-      fetchLatestReadingFromBackend(token),
-      fetchHistoryFromBackend(token),
-      fetchBillingFromBackend(token),
-      fetchAlertsFromBackend(token),
-    ]);
+    const latestPayload = await fetchLatestReadingFromBackend();
+    const latestReading = normalizeReadingPayload(latestPayload);
 
-    const latestReading = latestPayload.reading;
-    const history = historyPayload.readings || [];
-    const bill = normalizeBillPayload(billingPayload, latestReading, meterId);
-    const alerts = alertsPayload.alerts || [];
-    const source = [latestPayload, historyPayload, billingPayload, alertsPayload].every(
-      (result) => result.source === "database",
-    )
-      ? "database"
-      : "mock";
-    const meter = latestPayload.meter || getMockDeviceStatus(meterId, {}, latestReading);
-    const dailyUsage = buildDailyUsageSeries({ history, latestReading, meterId });
+    if (!latestReading) {
+      return buildDashboardFromSnapshot({
+        latestReading: null,
+        history: [],
+        bill: null,
+        alerts: [],
+        meter: null,
+        source: "database",
+        dailyUsage: [],
+        billingForecast: [],
+      });
+    }
+
+    const liveMeterId = latestReading.meterId || meterId || DEFAULT_METER_ID;
+    const historyPayload = await fetchHistoryFromBackend(liveMeterId);
+    const history = normalizeHistoryPayload(historyPayload);
+    let bill = normalizeBillPayload({}, latestReading, liveMeterId);
+    let alerts = buildLiveAlerts(latestReading, bill);
+
+    if (token && !isMockToken(token)) {
+      const [billingResult, alertsResult] = await Promise.allSettled([
+        fetchBillingFromBackend(token, liveMeterId),
+        fetchAlertsFromBackend(token, liveMeterId),
+      ]);
+
+      if (billingResult.status === "rejected" && billingResult.reason?.status === 401) {
+        throw billingResult.reason;
+      }
+
+      if (alertsResult.status === "rejected" && alertsResult.reason?.status === 401) {
+        throw alertsResult.reason;
+      }
+
+      if (billingResult.status === "fulfilled") {
+        bill = normalizeBillPayload(billingResult.value, latestReading, liveMeterId);
+      }
+
+      if (alertsResult.status === "fulfilled") {
+        alerts = alertsResult.value.alerts || alerts;
+      }
+    }
+
+    const dailyUsage = buildDailyUsageFromReadings({ history, latestReading });
 
     return buildDashboardFromSnapshot({
       latestReading,
       history,
       bill,
       alerts,
-      meter,
-      source,
+      meter: buildDeviceStatusFromReading(latestReading, liveMeterId),
+      source: "database",
       dailyUsage,
-      billingForecast: buildBillingForecastSeries({ bill, latestReading, history, dailyUsage, meterId }),
+      billingForecast: buildBillingForecastSeries({ bill, latestReading, history, dailyUsage, meterId: liveMeterId }),
     });
   } catch (error) {
     if (error.status === 401) {
       throw error;
     }
 
-    if (isNetworkError(error) || isMissingDataRouteError(error)) {
-      return buildDashboardFromSnapshot(getMockDashboardSnapshot(meterId));
+    if (isMissingDataRouteError(error)) {
+      return buildDashboardFromSnapshot({
+        latestReading: null,
+        history: [],
+        bill: null,
+        alerts: [],
+        meter: null,
+        source: "database",
+        dailyUsage: [],
+        billingForecast: [],
+      });
     }
 
-    throw error;
+    throw new Error("Unable to connect to backend");
   }
 }

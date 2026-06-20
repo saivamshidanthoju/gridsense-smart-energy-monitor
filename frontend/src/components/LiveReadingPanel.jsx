@@ -87,7 +87,7 @@ export default function LiveReadingPanel({ reading, lastUpdated }) {
 
         <div className="grid gap-3 sm:grid-cols-2">
           <SummaryStat label="Last sample" value={formatTimestamp(reading.timestamp)} />
-          <SummaryStat label="Refresh window" value="3 sec sync" />
+          <SummaryStat label="Refresh window" value="2 sec sync" />
           <SummaryStat label="Meter ID" value={reading.meterId || "Assigned"} />
           <SummaryStat label="Supply type" value={reading.phaseType || "Single phase"} />
         </div>

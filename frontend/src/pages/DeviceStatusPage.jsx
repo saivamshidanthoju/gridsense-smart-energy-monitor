@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { summarizeHistory } from "../data/mockData";
 
 function formatTimestamp(timestamp) {
   if (!timestamp) {

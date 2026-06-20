@@ -105,7 +105,7 @@ function GaugeMeter({ value, min, max, label, unit, colorClass, dangerPct = 85 }
 export default function LiveMonitor({ liveData, readings, todayKwh, monthKwh, user }) {
   const powerKw = (liveData.power / 1000).toFixed(2);
   const dailyCost = (todayKwh * 6.5).toFixed(1);
-  const meterId = user?.meterId || "ESP32-A4F2";
+  const meterId = user?.meterId || "SC-104829375";
 
   return (
     <div className="space-y-5">

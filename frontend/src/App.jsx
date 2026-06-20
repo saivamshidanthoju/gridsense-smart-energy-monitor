@@ -43,7 +43,7 @@ const INITIAL_DASHBOARD_STATE = {
   meter: null,
   dailyUsage: [],
   billingForecast: [],
-  source: "mock",
+  source: "database",
   connectionLabel: "Waiting for data",
   lastUpdated: null,
   error: "",
@@ -196,14 +196,14 @@ function AppContent() {
           setDashboardState((current) => ({
             ...current,
             loading: false,
-            error: error.message || "Unable to load meter data.",
+            error: "Unable to connect to backend",
           }));
         }
       }
     }
 
     refreshDashboard();
-    const intervalId = setInterval(refreshDashboard, 3000);
+    const intervalId = setInterval(refreshDashboard, 2000);
 
     return () => {
       ignore = true;
@@ -394,9 +394,9 @@ function AppContent() {
                   </div>
                 ) : null}
 
-                {dashboardState.loading && !dashboardState.latestReading ? (
+                {dashboardState.error ? null : !dashboardState.latestReading ? (
                   <div className="surface-panel fade-rise p-8 text-sm text-tonal">
-                    Loading your meter data...
+                    Waiting for ESP32 data...
                   </div>
                 ) : (
                   <div className="fade-rise">{pageContent[activePage] || pageContent.dashboard}</div>
