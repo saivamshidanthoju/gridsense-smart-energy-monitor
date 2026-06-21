@@ -1,4 +1,4 @@
-const DEFAULT_METER_ID = "ESP32-A4F2";
+const DEFAULT_METER_ID = "SC-104829375";
 const TARIFF_REGION = "Telangana";
 const TARIFF_CATEGORY = "LT-I Domestic";
 const DEFAULT_PHASE_TYPE = "single";

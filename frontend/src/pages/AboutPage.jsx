@@ -57,15 +57,7 @@ export default function AboutPage({ isAuthenticated = false, onDashboard, onNavi
     };
   }, []);
 
-  // Handle cross-page scrolling to Contact Us section
-  useEffect(() => {
-    if (sessionStorage.getItem("scrollToContact") === "true") {
-      sessionStorage.removeItem("scrollToContact");
-      setTimeout(() => {
-        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-      }, 150);
-    }
-  }, []);
+
 
   return (
     <PublicShell activePage="about" isAuthenticated={isAuthenticated} onDashboard={onDashboard} onNavigate={onNavigate}>
@@ -166,53 +158,6 @@ export default function AboutPage({ isAuthenticated = false, onDashboard, onNavi
             >
               Access Telemetry Dashboard
             </button>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 4: CONTACT SECTION (No Cards) */}
-      <section id="contact" className="bg-[var(--bg-base)] py-16 border-t border-[var(--surface-border)] scroll-reveal reveal-cta">
-        <div className="mx-auto max-w-[1000px] px-6">
-          <div className="text-center space-y-3 max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-mono font-bold text-[var(--accent-primary)] uppercase tracking-widest">Support Center</span>
-            <h2 className="text-2xl font-bold tracking-tight text-[var(--text-primary)] leading-tight">
-              Get in Touch
-            </h2>
-            <p className="text-xs text-[var(--text-secondary)]">
-              Have questions about meter node deployment, billing slabs, or cloud telemetry integration? Contact us directly.
-            </p>
-          </div>
-
-          <div className="grid gap-8 md:grid-cols-3 text-left">
-            {/* Phone */}
-            <div className="space-y-2 border-l border-[var(--surface-border-strong)] pl-4">
-              <span className="text-lg">📞</span>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">Phone Support</h4>
-              <p className="text-xs text-[var(--text-secondary)]">Immediate telephone diagnostics.</p>
-              <a href="tel:+918374170152" className="text-xs font-bold text-[var(--accent-primary)] hover:underline block pt-1">
-                +91 8374170152
-              </a>
-            </div>
-
-            {/* Email */}
-            <div className="space-y-2 border-l border-[var(--surface-border-strong)] pl-4">
-              <span className="text-lg">✉️</span>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">Email Support</h4>
-              <p className="text-xs text-[var(--text-secondary)]">Typical response within 24 hours.</p>
-              <a href="mailto:saivamshidanthoju@gmail.com" className="text-xs font-bold text-[var(--accent-primary)] hover:underline block pt-1">
-                saivamshidanthoju@gmail.com
-              </a>
-            </div>
-
-            {/* Location */}
-            <div className="space-y-2 border-l border-[var(--surface-border-strong)] pl-4">
-              <span className="text-lg">📍</span>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--text-primary)]">Branch Office</h4>
-              <p className="text-xs text-[var(--text-secondary)]">Local developer hub location.</p>
-              <span className="text-xs font-bold text-[var(--text-primary)] block pt-1">
-                Hyderabad, India
-              </span>
-            </div>
           </div>
         </div>
       </section>

@@ -163,16 +163,13 @@ export default function HomePage({ isAuthenticated = false, onDashboard, onNavig
     <PublicShell activePage="home" isAuthenticated={isAuthenticated} onDashboard={onDashboard} onNavigate={onNavigate}>
       
       {/* SECTION 1 — HERO */}
-      <section className="relative overflow-hidden bg-[var(--bg-deep)] py-16 lg:py-24 border-b border-[var(--surface-border)] bg-blueprint-pattern scroll-reveal">
+      <section className="relative overflow-hidden bg-[var(--bg-deep)] pt-16 pb-12 lg:pt-20 lg:pb-16 border-b border-[var(--surface-border)] bg-dot-grid scroll-reveal">
+
         <div className="mx-auto max-w-[1280px] px-6 relative z-10">
           <div className="grid gap-10 lg:grid-cols-12 items-center">
             
             {/* Left Hero side (40% visual weight) */}
             <div className="lg:col-span-5 space-y-4 text-left relative z-10 scroll-reveal reveal-fade-right">
-              <span className="inline-flex items-center gap-1.5 rounded bg-[var(--surface-soft)] border border-[var(--surface-border-strong)] px-2.5 py-0.5 text-[9px] font-mono font-bold text-[var(--accent-primary)] uppercase tracking-wider">
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-primary)] animate-pulse" />
-                <span>ESP32 IoT Meter Project</span>
-              </span>
               
               <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-bold leading-[1.2] tracking-tight text-[var(--text-primary)] max-w-[18ch]">
                 Track Electricity Consumption Before It Impacts Your Bill
@@ -213,7 +210,7 @@ export default function HomePage({ isAuthenticated = false, onDashboard, onNavig
             </div>
 
             {/* Right Hero side: Realistic industrial energy panel (60% visual weight) */}
-            <div className="lg:col-span-7 relative z-10 scroll-reveal reveal-fade-left stagger-2 lg:dashboard-hero-offset">
+            <div className="lg:col-span-7 relative z-10 scroll-reveal reveal-fade-left stagger-2 lg:dashboard-hero-offset premium-floating-tilt">
               <div className="border border-[var(--surface-border)] bg-[var(--surface-solid)] rounded-xl overflow-hidden p-5 text-left relative shadow-xl">
                 
                 {/* Console Header */}
@@ -333,7 +330,7 @@ export default function HomePage({ isAuthenticated = false, onDashboard, onNavig
       </section>
 
       {/* SECTION 2 — THE PROBLEM */}
-      <section id="problem-section" className="bg-[var(--surface-soft)] py-20 lg:py-24 border-b border-[var(--surface-border)] relative scroll-reveal">
+      <section id="problem-section" className="bg-[var(--surface-soft)] py-20 lg:py-24 border-b border-[var(--surface-border)] relative">
         <div className="mx-auto max-w-[1280px] px-6">
           <div className="grid gap-12 lg:grid-cols-12 items-center">
             
@@ -459,32 +456,66 @@ export default function HomePage({ isAuthenticated = false, onDashboard, onNavig
               {
                 title: "Live Monitoring",
                 desc: "Check active voltage phases, load currents, and instant watt parameters. Refreshes continuously.",
-                icon: "⚡",
+                icon: (
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                  </svg>
+                ),
               },
               {
                 title: "Energy Analytics",
                 desc: "Review logs, cycle records, and daily charts to isolate high load patterns.",
-                icon: "📈",
+                icon: (
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10" />
+                    <line x1="12" y1="20" x2="12" y2="4" />
+                    <line x1="6" y1="20" x2="6" y2="14" />
+                  </svg>
+                ),
               },
               {
                 title: "Bill Estimation",
                 desc: "GridSense calculates live projections against regional tariffs, accounting for slab rate boundaries.",
-                icon: "₹",
+                icon: (
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="6" y1="3" x2="18" y2="3" />
+                    <line x1="6" y1="8" x2="18" y2="8" />
+                    <path d="M6 3c5 0 7 5 0 10" />
+                    <line x1="6" y1="13" x2="18" y2="13" />
+                    <line x1="18" y1="13" x2="9" y2="21" />
+                  </svg>
+                ),
               },
               {
                 title: "Consumption Prediction",
                 desc: "Runs linear heuristics based on seasonal statistics to forecast total billing statements.",
-                icon: "🔮",
+                icon: (
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                    <line x1="12" y1="22.08" x2="12" y2="12" />
+                  </svg>
+                ),
               },
               {
                 title: "Smart Alerts",
                 desc: "Instant warning notifications if active power draws breach peak contract thresholds.",
-                icon: "🔔",
+                icon: (
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                ),
               },
               {
                 title: "Secure Login",
                 desc: "Protects consumer parameters and timeseries databases with robust authentication hooks.",
-                icon: "🔐",
+                icon: (
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                  </svg>
+                ),
               },
             ].map((f, idx) => (
               <div key={f.title} className={`flat-card p-6 text-left scroll-reveal reveal-scale-in stagger-${(idx % 3) + 1}`}>

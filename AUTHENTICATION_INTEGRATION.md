@@ -57,7 +57,7 @@
 
 #### Registration Test ✅
 ```
-Input: John Doe, john@example.com, ESP32-A4F2, password123
+Input: John Doe, john@example.com, SC-104829375, password123
 Result: User successfully created in MongoDB Atlas
 Document ID: 6a27b8fa6cafa6718cb824cc
 Verified in smart_energy.users collection
@@ -65,7 +65,7 @@ Verified in smart_energy.users collection
 
 #### Login Test ✅
 ```
-Input: john@example.com, ESP32-A4F2, password123
+Input: john@example.com, SC-104829375, password123
 Result: 
 - Login successful
 - JWT token generated

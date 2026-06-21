@@ -13,6 +13,7 @@ import PaymentsPage from "./pages/PaymentsPage";
 import Predictions from "./pages/Predictions";
 import RegisterPage from "./pages/RegisterPage";
 import SettingsPage from "./pages/SettingsPage";
+import ContactPage from "./pages/ContactPage";
 import { ThemeProvider } from "./context/ThemeContext";
 import { useTheme } from "./hooks/useTheme";
 import {
@@ -33,7 +34,7 @@ const NAV_ITEMS = [
 ];
 
 const PRIVATE_ROUTES = new Set([...NAV_ITEMS.map((item) => item.id), "analytics", "devices"]);
-const PUBLIC_ROUTES = new Set(["home", "about", "login", "signup"]);
+const PUBLIC_ROUTES = new Set(["home", "about", "login", "signup", "contact"]);
 
 const INITIAL_DASHBOARD_STATE = {
   latestReading: null,
@@ -46,13 +47,10 @@ const INITIAL_DASHBOARD_STATE = {
   source: "database",
   connectionLabel: "Waiting for data",
   lastUpdated: null,
-  error: "",
-  loading: true,
 };
 
 function getRouteFromPathname(pathname) {
-  const normalizedPath = pathname.replace(/^\/+|\/+$/g, "");
-
+  const normalizedPath = pathname.replace(/^\//, "");
   if (!normalizedPath) {
     return "home";
   }
@@ -262,67 +260,18 @@ function AppContent() {
   }
 
   function toggleSidebarCollapsed() {
-    setSidebarOpen(false);
     setSidebarCollapsed((current) => !current);
   }
 
-  if (!session?.user) {
-    if (route === "about") {
-      return <AboutPage onNavigate={navigateToPublic} />;
-    }
-
-    if (route === "login" || isPrivateRoute(route)) {
-      return (
-        <LoginPage
-          onAuthenticated={handleAuthenticated}
-          onNavigate={navigateToPublic}
-          onSwitchToRegister={() => navigateToPublic("signup")}
-        />
-      );
-    }
-
-    if (route === "signup") {
-      return (
-        <RegisterPage
-          onAuthenticated={handleAuthenticated}
-          onNavigate={navigateToPublic}
-          onSwitchToLogin={() => navigateToPublic("login")}
-        />
-      );
-    }
-
-    return <HomePage onNavigate={navigateToPublic} />;
-  }
-
-  if (route === "home") {
-    return (
-      <HomePage
-        isAuthenticated
-        onDashboard={() => navigateToPage("dashboard")}
-        onNavigate={navigateToPublic}
-      />
-    );
-  }
-
-  if (route === "about") {
-    return (
-      <AboutPage
-        isAuthenticated
-        onDashboard={() => navigateToPage("dashboard")}
-        onNavigate={navigateToPublic}
-      />
-    );
-  }
-
-  const activePage = isPrivateRoute(route) ? route : "dashboard";
   const meterStatus = getMeterStatus(
     dashboardState.meter,
     dashboardState.latestReading,
-    dashboardState.connectionLabel,
+    dashboardState.connectionLabel
   );
+
   const sharedPageProps = {
-    user: session.user,
-    token: session.token,
+    user: session?.user,
+    token: session?.token,
     latestReading: dashboardState.latestReading,
     history: dashboardState.history,
     bill: dashboardState.bill,
@@ -333,7 +282,7 @@ function AppContent() {
     billingForecast: dashboardState.billingForecast,
     connectionLabel: dashboardState.connectionLabel,
     lastUpdated: dashboardState.lastUpdated,
-    authLabel: session.authLabel,
+    authLabel: session?.authLabel,
     source: dashboardState.source,
     onNavigate: navigateToPage,
   };
@@ -348,6 +297,34 @@ function AppContent() {
     devices: <DeviceStatusPage {...sharedPageProps} />,
     settings: <SettingsPage {...sharedPageProps} />,
   };
+
+  if (PUBLIC_ROUTES.has(route)) {
+    if (route === "login") {
+      return <LoginPage onAuthenticated={handleAuthenticated} onNavigate={navigateToPublic} />;
+    }
+    if (route === "signup") {
+      return <RegisterPage onAuthenticated={handleAuthenticated} onNavigate={navigateToPublic} />;
+    }
+    if (route === "about") {
+      return <AboutPage isAuthenticated={!!session?.token} onNavigate={navigateToPublic} />;
+    }
+    if (route === "contact") {
+      return <ContactPage isAuthenticated={!!session?.token} onNavigate={navigateToPublic} />;
+    }
+    return (
+      <HomePage
+        isAuthenticated={!!session?.token}
+        onDashboard={() => navigateToPage("dashboard")}
+        onNavigate={navigateToPublic}
+      />
+    );
+  }
+
+  if (!session?.token) {
+    return <LoginPage onAuthenticated={handleAuthenticated} onNavigate={navigateToPublic} />;
+  }
+
+  const activePage = pageContent[route] ? route : "dashboard";
 
   return (
     <div className="min-h-screen">

@@ -21,14 +21,20 @@ ESP32 + sensors -> MQTT or HTTP -> Node.js + Express -> MongoDB Atlas -> React d
 3. `GET /api/auth/me`
    Uses the JWT token to return the authenticated user profile.
 
-## Protected APIs
+## Live reading APIs
 
 - `GET /api/readings/latest`
 - `GET /api/readings/history`
+
+These routes read directly from the MongoDB Atlas `readings` collection and can be called by the React dashboard polling loop.
+
+## Protected APIs
+
 - `GET /api/billing`
 - `GET /api/alerts`
 
-All protected routes read the JWT token and return data only for the authenticated user's `meterId`.
+Protected billing and alert routes accept an optional `meterId` query parameter, then fall back to
+the authenticated user's meter and finally the latest live ESP32 meter reading.
 
 ## Local development
 
@@ -36,4 +42,4 @@ All protected routes read the JWT token and return data only for the authenticat
 2. Add your MongoDB Atlas connection string and JWT secret.
 3. Run `npm run dev`.
 
-If `MONGODB_URI` is missing, the backend still runs in mock persistence mode so the frontend can be exercised safely during development.
+`MONGODB_URI` is required because live ESP32 readings are stored in MongoDB Atlas.

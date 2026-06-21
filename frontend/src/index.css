@@ -5,31 +5,31 @@
 @property --bg-base {
   syntax: '<color>';
   inherits: true;
-  initial-value: #fbfaf7;
+  initial-value: #f8fafc;
 }
 
 @property --bg-deep {
   syntax: '<color>';
   inherits: true;
-  initial-value: #f9f6f0;
+  initial-value: #f1f5f9;
 }
 
 @property --text-primary {
   syntax: '<color>';
   inherits: true;
-  initial-value: #1c2826;
+  initial-value: #0f172a;
 }
 
 @property --text-secondary {
   syntax: '<color>';
   inherits: true;
-  initial-value: #4a5754;
+  initial-value: #475569;
 }
 
 @property --text-tertiary {
   syntax: '<color>';
   inherits: true;
-  initial-value: #8b9794;
+  initial-value: #94a3b8;
 }
 
 @property --surface-solid {
@@ -41,7 +41,7 @@
 @property --surface-soft {
   syntax: '<color>';
   inherits: true;
-  initial-value: #f4f0e6;
+  initial-value: #f1f5f9;
 }
 
 @property --surface-strong {
@@ -53,13 +53,13 @@
 @property --surface-border {
   syntax: '<color>';
   inherits: true;
-  initial-value: #e6dfd3;
+  initial-value: #e2e8f0;
 }
 
 @property --surface-border-strong {
   syntax: '<color>';
   inherits: true;
-  initial-value: #d3c8b4;
+  initial-value: #cbd5e1;
 }
 
 @property --accent-primary {
@@ -71,47 +71,47 @@
 @property --shell-border {
   syntax: '<color>';
   inherits: true;
-  initial-value: #e6dfd3;
+  initial-value: #e2e8f0;
 }
 
 @property --sidebar-bg {
   syntax: '<color>';
   inherits: true;
-  initial-value: #fcfbf9;
+  initial-value: #f8fafc;
 }
 
 @property --sidebar-border {
   syntax: '<color>';
   inherits: true;
-  initial-value: #e6dfd3;
+  initial-value: #e2e8f0;
 }
 
 @property --sidebar-text {
   syntax: '<color>';
   inherits: true;
-  initial-value: #4a5754;
+  initial-value: #475569;
 }
 
 :root {
-  --bg-base: #fbfaf7;
-  --bg-deep: #f9f6f0;
-  --text-primary: #1c2826;
-  --text-secondary: #4a5754;
-  --text-tertiary: #8b9794;
+  --bg-base: #f8fafc;
+  --bg-deep: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-tertiary: #94a3b8;
   --surface-solid: #ffffff;
-  --surface-soft: #f4f0e6;
+  --surface-soft: #f1f5f9;
   --surface-strong: #ffffff;
-  --surface-border: #e6dfd3;
-  --surface-border-strong: #d3c8b4;
+  --surface-border: #e2e8f0;
+  --surface-border-strong: #cbd5e1;
   --accent-primary: #386641;
-  --shell-border: #e6dfd3;
-  --sidebar-bg: #fcfbf9;
-  --sidebar-border: #e6dfd3;
-  --sidebar-text: #4a5754;
-  --surface-glass: rgba(255, 255, 255, 0.85);
+  --shell-border: #e2e8f0;
+  --sidebar-bg: #f8fafc;
+  --sidebar-border: #e2e8f0;
+  --sidebar-text: #475569;
+  --surface-glass: rgba(255, 255, 255, 0.75);
   
-  --shadow-soft: 0 2px 12px rgba(60, 50, 40, 0.04);
-  --shadow-panel: 0 8px 24px rgba(60, 50, 40, 0.06);
+  --shadow-soft: 0 2px 12px rgba(15, 23, 42, 0.03);
+  --shadow-panel: 0 8px 24px rgba(15, 23, 42, 0.05);
 }
 
 html.dark {
@@ -137,35 +137,64 @@ html.dark {
 }
 
 .theme-transitioning,
-.theme-transitioning * {
+.theme-transitioning :root {
   transition: 
-    background-color 450ms ease-in-out,
-    border-color 450ms ease-in-out,
-    color 450ms ease-in-out,
-    fill 450ms ease-in-out,
-    stroke 450ms ease-in-out,
-    box-shadow 450ms ease-in-out,
-    --bg-base 450ms ease-in-out,
-    --bg-deep 450ms ease-in-out,
-    --text-primary 450ms ease-in-out,
-    --text-secondary 450ms ease-in-out,
-    --surface-solid 450ms ease-in-out,
-    --surface-soft 450ms ease-in-out,
-    --surface-strong 450ms ease-in-out,
-    --surface-border 450ms ease-in-out,
-    --accent-primary 450ms ease-in-out !important;
+    --bg-base 250ms ease,
+    --bg-deep 250ms ease,
+    --text-primary 250ms ease,
+    --text-secondary 250ms ease,
+    --text-tertiary 250ms ease,
+    --surface-solid 250ms ease,
+    --surface-soft 250ms ease,
+    --surface-strong 250ms ease,
+    --surface-border 250ms ease,
+    --surface-border-strong 250ms ease,
+    --accent-primary 250ms ease,
+    --shell-border 250ms ease,
+    --sidebar-bg 250ms ease,
+    --sidebar-border 250ms ease,
+    --sidebar-text 250ms ease !important;
+}
+
+.theme-transitioning body,
+.theme-transitioning header,
+.theme-transitioning footer,
+.theme-transitioning nav,
+.theme-transitioning aside,
+.theme-transitioning main,
+.theme-transitioning section,
+.theme-transitioning div,
+.theme-transitioning button,
+.theme-transitioning input,
+.theme-transitioning select,
+.theme-transitioning textarea,
+.theme-transitioning a,
+.theme-transitioning h1,
+.theme-transitioning h2,
+.theme-transitioning h3,
+.theme-transitioning h4,
+.theme-transitioning h5,
+.theme-transitioning h6,
+.theme-transitioning p,
+.theme-transitioning span,
+.theme-transitioning svg,
+.theme-transitioning path {
+  transition: 
+    background-color 250ms ease,
+    border-color 250ms ease,
+    color 250ms ease,
+    fill 250ms ease,
+    stroke 250ms ease,
+    box-shadow 250ms ease !important;
 }
 
 /* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .theme-transitioning,
+  .theme-transitioning body,
   .theme-transitioning * {
     transition-duration: 0.05s !important;
   }
-}
-
-#root {
-  min-height: 100%;
 }
 
 body {
@@ -1218,5 +1247,57 @@ html.dark .slab-progress-bar {
   }
 }
 
+/* Premium Floating 3D Perspective Layout */
+@keyframes float-bob {
+  0% {
+    transform: perspective(1200px) rotateY(-10deg) rotateX(6deg) rotateZ(-1deg) translateY(0px);
+  }
+  50% {
+    transform: perspective(1200px) rotateY(-10deg) rotateX(6deg) rotateZ(-1deg) translateY(-12px);
+  }
+  100% {
+    transform: perspective(1200px) rotateY(-10deg) rotateX(6deg) rotateZ(-1deg) translateY(0px);
+  }
+}
 
+.premium-floating-tilt {
+  transform-style: preserve-3d;
+  will-change: transform, box-shadow;
+  animation: float-bob 6s ease-in-out infinite;
+  box-shadow: 
+    -15px 25px 50px -15px rgba(15, 23, 42, 0.12),
+    -35px 45px 90px -30px rgba(15, 23, 42, 0.08),
+    0 0 40px 0 rgba(56, 102, 65, 0.02);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
+.premium-floating-tilt:hover {
+  animation-play-state: paused;
+  transform: perspective(1200px) rotateY(-2deg) rotateX(1deg) rotateZ(0deg) scale(1.02) translateY(-4px) !important;
+  box-shadow: 
+    -8px 15px 30px -10px rgba(15, 23, 42, 0.15),
+    -20px 30px 60px -20px rgba(15, 23, 42, 0.1),
+    0 0 50px 5px rgba(56, 102, 65, 0.05);
+}
+
+@media (max-width: 1024px) {
+  .premium-floating-tilt {
+    animation: none !important;
+    transform: none !important;
+    box-shadow: var(--shadow-panel) !important;
+  }
+}
+
+/* Premium dot grid background */
+.bg-dot-grid {
+  position: relative;
+}
+.bg-dot-grid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(rgba(56, 102, 65, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: 1;
+}

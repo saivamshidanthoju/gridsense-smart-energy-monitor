@@ -42,12 +42,7 @@ export default function PublicShell({ activePage, children, isAuthenticated = fa
   }, []);
 
   function handleContactClick() {
-    if (activePage === "about") {
-      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      sessionStorage.setItem("scrollToContact", "true");
-      onNavigate?.("about");
-    }
+    onNavigate?.("contact");
   }
 
   return (
@@ -75,7 +70,7 @@ export default function PublicShell({ activePage, children, isAuthenticated = fa
                 <NavButton active={activePage === "about"} onClick={() => onNavigate?.("about")}>
                   About
                 </NavButton>
-                <NavButton active={false} onClick={handleContactClick}>
+                <NavButton active={activePage === "contact"} onClick={handleContactClick}>
                   Contact Us
                 </NavButton>
               </div>
@@ -131,7 +126,7 @@ export default function PublicShell({ activePage, children, isAuthenticated = fa
               </div>
 
               {/* Contact Details */}
-              <div className="space-y-3">
+              <div id="contact" className="space-y-3">
                 <h4 className="font-bold text-xs uppercase tracking-wider text-[var(--text-primary)]">Contact Information</h4>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
