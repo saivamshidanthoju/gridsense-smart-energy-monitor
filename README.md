@@ -1,154 +1,84 @@
- ⚡ Secure IoT Smart Energy Meter
+# ⚡ Secure IoT Smart Energy Meter
 
-> A Secure IoT-Based Smart Energy Monitoring and Billing Analytics System for Real-Time Electricity Consumption Tracking.
+> **A Secure IoT-Based Smart Energy Monitoring and Billing Analytics System for Real-Time Electricity Consumption Tracking.**
 
-![React](https://img.shields.io/badge/Frontend-React-blue?style=for-the-badge&logo=react)
-![NodeJS](https://img.shields.io/badge/Backend-Node.js-green?style=for-the-badge&logo=node.js)
-![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38BDF8?style=for-the-badge&logo=tailwindcss)
----
-
- 📌 Overview
-
-The **Secure IoT Smart Energy Meter** is a modern real-time electricity monitoring platform designed to track power consumption, analyze energy usage, estimate electricity bills, and provide smart analytics through an interactive dashboard.
-
-This project combines **IoT hardware**, **cloud-ready architecture**, and **modern web technologies** to create a secure and intelligent energy monitoring solution.
-
-The system is designed for:
-
-* Smart homes
-* Energy management systems
-* IoT research
-* Smart grid applications
-* Real-time monitoring environments
+![React](https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge\&logo=react)
+![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?style=for-the-badge\&logo=node.js)
+![Tailwind CSS](https://img.shields.io/badge/UI-TailwindCSS-06B6D4?style=for-the-badge\&logo=tailwindcss)
+![ESP32](https://img.shields.io/badge/IoT-ESP32-E7352C?style=for-the-badge)
 
 ---
 
- Features
+## 📌 Overview
 
- 🔴 Real-Time Energy Monitoring
+Secure IoT Smart Energy Meter is a full-stack IoT application designed to monitor electricity consumption in real time, visualize energy usage, estimate electricity bills, and provide actionable insights through an interactive dashboard.
 
-* Live electricity usage tracking
-* Voltage & current monitoring
-* Power consumption visualization
-
-** Interactive Analytics Dashboard
-
-* Daily usage charts
-* Monthly consumption graphs
-* Real-time trend analysis
-* Energy statistics cards
-
-##  Smart Billing System
-
-* Electricity bill estimation
-* Tariff-based calculation
-* Monthly usage prediction
-
-##  Secure Architecture
-
-* Authentication system
-* Protected dashboard access
-* Secure device monitoring
-
-##  Smart Alerts
-
-* High power usage alerts
-* Device monitoring notifications
-* Energy anomaly detection
-
-##  Cloud-Ready Design
-
-* Designed for IoT cloud integration
-* MQTT & API integration ready
-* Scalable backend architecture
-
-#  Skills Demonstrated
-
-* IoT System Design
-* Real-Time Monitoring
-* Full Stack Development
-* REST API Development
-* Dashboard UI/UX
-* Secure Authentication
-* Data Visualization
-* Energy Analytics
-* React.js Development
-* Node.js Backend Development
-
-
-# 🛠️ Technologies Used
-
-| Technology   | Purpose             |
-| ------------ | ------------------- |
-| React.js     | Frontend UI         |
-| Tailwind CSS | Responsive Styling  |
-| Node.js      | Backend Runtime     |
-| Express.js   | REST APIs           |
-| ESP32        | IoT Device          |
-| JavaScript   | Application Logic   |
-| Chart.js     | Data Visualization  |
-| Vite         | Frontend Build Tool |
+The system combines IoT hardware with a scalable web application to deliver secure and efficient energy monitoring for smart environments.
 
 ---
 
-# 🏗️ System Architecture
+## ✨ Key Features
 
-+-------------------+
-|   ESP32 Device    |
-| Voltage/Current   |
-+---------+---------+
-          |
-          v
-+-------------------+
-| Node.js Backend   |
-| REST APIs         |
-+---------+---------+
-          |
-          v
-+-------------------+
-| React Dashboard   |
-| Analytics & UI    |
-+---------+---------+
-          |
-          v
-+-------------------+
-| Billing & Alerts  |
-| Monitoring System |
-+-------------------+
+* Real-time voltage, current, and power monitoring
+* Interactive analytics dashboard with energy usage visualization
+* Electricity bill estimation based on configurable tariffs
+* Secure user authentication and protected dashboard access
+* High energy consumption alerts
+* Scalable architecture with cloud integration readiness
+* RESTful API-based communication between hardware and web application
 
+---
 
+## 🛠️ Technology Stack
 
+| Category  | Technologies                        |
+| --------- | ----------------------------------- |
+| Frontend  | React, Tailwind CSS, Chart.js, Vite |
+| Backend   | Node.js, Express.js                 |
+| IoT       | ESP32                               |
+| Languages | JavaScript                          |
+| APIs      | REST API                            |
 
+---
+
+## 🏗️ System Architecture
+
+```text
+ESP32 Device
+      │
+      ▼
+Node.js REST API
+      │
+      ▼
+React Dashboard
+      │
+      ▼
+Analytics • Billing • Alerts
+```
+
+---
+
+## 📂 Project Structure
+
+```text
 secure-iot-smart-energy-meter/
-│
-├── frontend/         # React Frontend
-├── backend/          # Node.js Backend
+├── frontend/
+├── backend/
 ├── README.md
 └── .gitignore
+```
 
+---
 
-🔮 Future Enhancements
+## 🚀 Getting Started
 
-* MQTT Real-Time Communication
-* AI-Based Energy Prediction
-* Firebase / AWS IoT Integration
-* Mobile Application
-* Smart Appliance Automation
-* Power Theft Detection
-* Machine Learning Analytics
-
- 
- ⚙️ Installation & Setup
-
-## 1️⃣ Clone Repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/saivamshidanthoju/secure-iot-smart-energy-meter.git
 ```
 
----
-
-## 2️⃣ Frontend Setup
+### Frontend
 
 ```bash
 cd frontend
@@ -156,9 +86,7 @@ npm install
 npm run dev
 ```
 
----
-
-## 3️⃣ Backend Setup
+### Backend
 
 ```bash
 cd backend
@@ -168,45 +96,36 @@ node index.js
 
 ---
 
-# 📈 Project Highlights
+## 📈 Skills Demonstrated
 
-✅ Real-Time Monitoring
-✅ Interactive Dashboard
-✅ Modern UI/UX
-✅ IoT Integration
-✅ Billing Analytics
-✅ Cloud-Ready Architecture
-✅ Secure Authentication
-✅ Scalable Design
-
-# 🤝 Contributors
-
-This project was collaboratively developed by a 3-member team from
-MVSR Engineering College, Department of CSE (IoT & Cyber Security with Blockchain Technology).
-
-## Team Members
-
-* D Sai Vamshi
-* G Tejeswara Rao
-* D Shashank
-
-## Contributions
-
-| Team Member  | Contribution                                                       |
-| ------------ | ------------------------------------------------------------------ |
-| Danthoju Sai Vamshi | Frontend Development, Dashboard UI, Analytics Integration          |
-| Gunda Tejeswara Rao   | Backend APIs, Authentication, Database Integration                 |
-| Dava Shashank    | IoT Hardware Integration, ESP32 Monitoring, Sensor Data Processing |
+* IoT System Development
+* Full Stack Web Development
+* REST API Development
+* Secure Authentication
+* Real-Time Data Processing
+* Dashboard & Data Visualization
+* Energy Consumption Analytics
+* Responsive UI Development
 
 ---
 
-Support
+## 🔮 Future Enhancements
 
-If you like this project, give it a ⭐ on GitHub.
+* MQTT-based real-time communication
+* AWS IoT / Firebase integration
+* AI-powered energy consumption prediction
+* Smart appliance automation
+* Power theft detection
+* Mobile application support
 
+---
 
-# 📬 Contact
+## 📄 License
 
-For collaboration or project discussions:
+This project is intended for educational and learning purposes.
 
-* GitHub: https://github.com/saivamshidanthoju
+---
+
+## 📫 Contact
+
+**GitHub:** https://github.com/saivamshidanthoju
